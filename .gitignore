@@ -1,0 +1,16 @@
+*.log
+*.iml
+*.swp
+*.swo
+*.stackdump
+.DS_Store
+/.idea
+/.gradle
+/build
+/logs
+/.appdata
+/typings
+*.suo
+*.DotSettings
+bin
+obj

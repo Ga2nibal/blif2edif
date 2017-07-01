@@ -1,0 +1,40 @@
+.model CM82As
+.inputs a b c d e
+.outputs f g h
+.names a s f f
+01- 1
+10- 1
+
+
+1-1 1
+-01 1
+
+.names o r g g # function init
+11- 1
+00- 1
+1-1 1
+-11 1
+.names o d e h h 
+ 01-- 1
+0-1- 1
+-11- 1
+0--1 1
+-1-1 1
+.names a  b c o o
+00-- 1
+0-0- 1
+-00- 1
+0--1 1
+-0-1 1
+--01 1
+.names d e r r
+01- 1
+10- 1
+0-1 1
+-11 1
+.names b c s s
+01- 1
+10- 1
+1-1 1
+-01 1
+.end

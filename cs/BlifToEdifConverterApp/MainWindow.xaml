@@ -1,0 +1,61 @@
+﻿<Window x:Class="BlifToEdifConverterApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BlifToEdifConverterApp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+	<Grid Margin="5,10">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="10*"/>
+			<ColumnDefinition Width="10*"/>
+			<ColumnDefinition Width="Auto"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="10*"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<TextBlock Margin="3,3,3,3"
+                       Text="BLIF to EDIF Converter"
+                       TextAlignment="Center" Grid.Row="0" Grid.ColumnSpan="3"/>
+
+		<TextBox TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"  Margin="5"
+			AcceptsReturn="True" Name="BlifTextBox" Grid.Row="2" Grid.Column="0"/>
+		<TextBox TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"  Margin="5"
+			AcceptsReturn="True" Name="EdifTextBox" Grid.Row="2" Grid.Column="1"/>
+		<StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left">
+			<Button Name="LoadBlif" HorizontalAlignment="Left" VerticalAlignment="Center"
+					Width="60" Height="Auto" Content="Load" Margin="3, 0"
+					Click="LoadBlif_OnClick"></Button>
+			<Button Name="SaveBlif" HorizontalAlignment="Left" VerticalAlignment="Center"
+					Width="60" Height="Auto" Content="Save" Margin="3, 0"
+					Click="SaveBlif_OnClick"></Button>
+		</StackPanel>
+		<StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+			<Button Name="LoadEdif" HorizontalAlignment="Right" VerticalAlignment="Center"
+					Width="60" Height="Auto" Content="Load" Margin="3, 0"
+					Click="LoadEdif_OnClick"></Button>
+			<Button Name="SaveEdif" HorizontalAlignment="Right" VerticalAlignment="Center"
+					Width="60" Height="Auto" Content="Save" Margin="3, 0"
+					Click="SaveEdif_OnClick"></Button>
+		</StackPanel>
+		<StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right"
+					VerticalAlignment="Top">
+			<Button Height="Auto" Content="Convert to Edif" Width="90" Name="ConvertToEdif"
+					Margin="3,0" Click="ConvertToEdif_OnClick"></Button>
+			<Button Height="Auto" Content="InitCalc" Width="60" Name="CalcInit"
+					Margin="3,0" Click="CalcInit_OnClick"></Button>
+		</StackPanel>
+		<StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right"
+					VerticalAlignment="Top">
+			<RadioButton Height="Auto" Content="UTF8" Width="Auto" Name="RadioUTFEncoding"
+					Margin="3,0" IsChecked="True" Checked="RadioUTFEncoding_OnChecked"></RadioButton>
+			<RadioButton Height="Auto" Content="Local Encoding" Width="Auto" Name="RadioLocalEncoding"
+					Margin="3,0" Checked="RadioLocalEncoding_OnChecked"></RadioButton>
+		</StackPanel>
+	</Grid>
+</Window>
