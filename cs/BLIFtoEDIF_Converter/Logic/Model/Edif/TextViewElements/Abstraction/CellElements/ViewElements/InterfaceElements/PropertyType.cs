@@ -10,6 +10,7 @@
 		NLW_MACRO_TAG,
 		NLW_MACRO_ALIAS,
 		XSTLIB,
-		INIT
+		INIT,
+		PART
 	}
 }
