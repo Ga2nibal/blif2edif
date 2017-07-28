@@ -50,6 +50,26 @@
     <Compile Include="init_calculator\LogicFunction.cs" />
     <Compile Include="init_calculator\Port.cs" />
     <Compile Include="init_calculator\PortDirection.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewElements\ContentsElements\IInstance.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewElements\ContentsElements\INet.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewElements\ContentsElements\InstanceElements\ICellRef.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewElements\ContentsElements\InstanceElements\ILibraryRef.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewElements\ContentsElements\InstanceElements\IViewRef.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewElements\ContentsElements\NetElements\IPortRef.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewElements\IContents.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewElements\IInterface.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewElements\InterfaceElements\IPort.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewElements\InterfaceElements\IProperty.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewElements\InterfaceElements\IPropertyValue.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewElements\InterfaceElements\PortDirection.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewElements\InterfaceElements\PropertyType.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewElements\InterfaceElements\PropertyValueType.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewType.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\IView.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellType.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\ICell.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IExternal.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\ITechnology.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -57,7 +77,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Logic\Model\" />
+    <Folder Include="Logic\Model\Blif\" />
+    <Folder Include="Logic\Model\Edif\TextViewElements\Implementation\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
