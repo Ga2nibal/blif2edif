@@ -2,7 +2,7 @@
 
 namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction
 {
-	public class EdifVersion
+	public class EdifVersion : IEdifTextConvertable
 	{
 		public EdifVersion(int majorVersion, int midVersion, int minorVersion)
 		{
@@ -20,5 +20,9 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction
 		public int MajorVersion { get; }
 		public int MidVersion { get; }
 		public int MinorVersion { get; }
+		public string ToEdifText()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

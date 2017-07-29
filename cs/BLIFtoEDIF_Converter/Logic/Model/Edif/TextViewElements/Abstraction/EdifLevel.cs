@@ -1,6 +1,6 @@
 ﻿namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction
 {
-	public class EdifLevel
+	public class EdifLevel : IEdifTextConvertable
 	{
 		public EdifLevel(int level)
 		{
@@ -8,5 +8,9 @@
 		}
 
 		public int Level { get; }
+		public string ToEdifText()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

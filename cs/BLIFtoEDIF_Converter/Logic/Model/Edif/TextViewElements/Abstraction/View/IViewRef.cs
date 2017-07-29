@@ -2,7 +2,7 @@
 
 namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.View
 {
-	public interface IViewRef
+	public interface IViewRef : IEdifTextConvertable
 	{
 		string Name { get; }
 		ICellRef CellRef { get; }

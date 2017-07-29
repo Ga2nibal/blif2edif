@@ -3,7 +3,7 @@ using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Propert
 
 namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction
 {
-	public interface IInterface
+	public interface IInterface : IEdifTextConvertable
 	{
 		IList<init_calculator.Port> Ports { get; }
 		string Designator { get; }

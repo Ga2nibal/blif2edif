@@ -4,7 +4,7 @@ using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.View;
 
 namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction
 {
-	public interface IInstance
+	public interface IInstance : IEdifTextConvertable
 	{
 		string Name { get; }
 		IViewRef ViewRef { get; }
