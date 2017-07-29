@@ -43,14 +43,14 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory
 
 		IDesign CreateDesign(string name, IList<ICellRef> cellRefs, IList<IProperty> properties);
 
-		IEdif CreateEdif(EdifVersion version, EdifLevel level, KeywordMap keywordMap, IStatus status, IExternal external,
+		IEdif CreateEdif(string name, IEdifVersion version, IEdifLevel level, IKeywordMap keywordMap, IStatus status, IExternal external,
 			ILibrary library, IDesign design);
 
 		IEdifLevel CreateEdifLevel(int level);
 
 		IEdifVersion CreateEdifVersion(int majorVersion, int midVersion, int minorVersion);
 
-		IExternal CreateExternal(string name, int edifLevel, ITechnology technology, IList<ICell> cells);
+		IExternal CreateExternal(string name, IEdifLevel edifLevel, ITechnology technology, IList<ICell> cells);
 
 		IInterface CreateInterface(IList<IPort> ports, string designator, IList<IProperty> properties);
 

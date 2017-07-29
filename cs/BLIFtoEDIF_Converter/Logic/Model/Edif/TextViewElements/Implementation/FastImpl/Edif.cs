@@ -5,8 +5,9 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 {
 	class Edif : IEdif
 	{
-		public Edif(EdifVersion version, EdifLevel level, KeywordMap keywordMap, IStatus status, IExternal external, ILibrary library, IDesign design)
+		public Edif(string name, IEdifVersion version, IEdifLevel level, IKeywordMap keywordMap, IStatus status, IExternal external, ILibrary library, IDesign design)
 		{
+			Name = name;
 			Version = version;
 			Level = level;
 			KeywordMap = keywordMap;
@@ -18,9 +19,10 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 
 		#region [IEdif implmentaion]
 
-		public EdifVersion Version { get; }
-		public EdifLevel Level { get; }
-		public KeywordMap KeywordMap { get; }
+		public string Name { get; }
+		public IEdifVersion Version { get; }
+		public IEdifLevel Level { get; }
+		public IKeywordMap KeywordMap { get; }
 		public IStatus Status { get; }
 		public IExternal External { get; }
 		public ILibrary Library { get; }

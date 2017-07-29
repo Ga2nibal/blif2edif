@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using BLIFtoEDIF_Converter.init_calculator;
+﻿using System;
+using System.Collections.Generic;
 using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction;
 using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Cell;
 using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Instance;
@@ -189,6 +189,162 @@ namespace Tests.ConvertTextViewElementsTests
 			IViewRef viewref = factory.CreateViewRef("viewrefname", cellRef);
 			string textView = viewref.ToEdifText();
 			Assert.AreEqual(@"(viewRef viewrefname (cellRef cellrefname))", textView);
+		}
+
+		[TestMethod]
+		public void TestComment()
+		{
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+
+			IComment comment = factory.CreateComment("commentmessage");
+			string textView = comment.ToEdifText();
+			Assert.AreEqual(@"(comment ""commentmessage"")", textView);
+
+			comment = factory.CreateComment("comment message");
+			textView = comment.ToEdifText();
+			Assert.AreEqual(@"(comment ""comment message"")", textView);
+		}
+
+		[TestMethod]
+		public void TestContents()
+		{
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+
+			IInstance instance = factory.CreateInstance("INSTANCE_0", null, null);
+			INet net = factory.CreateNet("netname", null);
+			IContents contents = factory.CreateContents(new List<IInstance>() {instance}, new List<INet>() {net});
+			string textView = contents.ToEdifText();
+			Assert.AreEqual(@"(contents (instance INSTANCE_0) (net netname))", textView);
+		}
+
+		[TestMethod]
+		public void TestDesign()
+		{
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+
+			ICellRef cellRef = factory.CreateCellRef("cellrefname", null);
+			IPropertyValue propertyValue = factory.CreatePropertyValue(10, PropertyValueType.Integer);
+			IProperty property = factory.CreateProperty(PropertyType.PART, propertyValue, "ZZZ");
+			IDesign design = factory.CreateDesign("designname", new List<ICellRef>() {cellRef}, new List<IProperty>() {property});
+			string textView = design.ToEdifText();
+			Assert.AreEqual(@"(design designname (cellRef cellrefname) (property PART (integer 10) (owner ""ZZZ"")))", textView);
+		}
+
+		[TestMethod]
+		public void TestEdif()
+		{
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+
+			IEdifVersion edifVersion = factory.CreateEdifVersion(2, 0, 0);
+			IEdifLevel edifLevel = factory.CreateEdifLevel(1);
+			IKeywordMap keywordMap = factory.CreateKeywordMap(2);
+			IStatus status = factory.CreateStatus(null);
+			IExternal external = factory.CreateExternal("externalName", edifLevel, null, null);
+			ILibrary library = factory.CreateLibrary("library_name", edifLevel, null, null);
+			IDesign design = factory.CreateDesign("designname", null, null);
+			IEdif edif = factory.CreateEdif("adder_as_main", edifVersion, edifLevel, keywordMap, status, external, library, design);
+			string textView = edif.ToEdifText();
+			Assert.AreEqual(@"(edif adder_as_main (edifVersion 2 0 0) (edifLevel 1) (keywordMap (keywordLevel 2)) (status) (external externalName) (library library_name (edifLevel 1)) (design designname)",
+				textView);
+		}
+
+		[TestMethod]
+		public void TestEdifLevel()
+		{
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+
+			IEdifLevel edifLevel = factory.CreateEdifLevel(2);
+			string textView = edifLevel.ToEdifText();
+			Assert.AreEqual(@"(edifLevel 1)", textView);
+		}
+
+		[TestMethod]
+		public void TestEdifVersionl()
+		{
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+
+			IEdifVersion edifVersion = factory.CreateEdifVersion(1, 2, 3);
+			string textView = edifVersion.ToEdifText();
+			Assert.AreEqual(@"(edifVersion 1 2 3)", textView);
+		}
+
+		[TestMethod]
+		public void TestExternal()
+		{
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+
+			ITechnology technology = factory.CreateTechnology("ttt");
+			ICell cell = factory.CreateCell("testCell", CellType.GENERIC, null);
+			IEdifLevel edifLevel = factory.CreateEdifLevel(0);
+			IExternal external = factory.CreateExternal("externalName", edifLevel, technology, new List<ICell>() { cell });
+			string textView = external.ToEdifText();
+			Assert.AreEqual(@"external externalName (edifLevel 0) (technology (ttt)) (cell testCell))", textView);
+		}
+
+		[TestMethod]
+		public void TestInterface()
+		{
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+
+			IPort port = factory.CreatePort("port1", PortDirection.OUTPUT);
+			IPropertyValue propertyValue = factory.CreatePropertyValue(3, PropertyValueType.Integer);
+			IProperty property = factory.CreateProperty(PropertyType.XSTLIB, propertyValue, "ZXC");
+			IInterface inInterface = factory.CreateInterface(new List<IPort>() {port}, "desssignator2", new List<IProperty>() {property});
+			string textView = inInterface.ToEdifText();
+			Assert.AreEqual(@"(interface (port port1 (direction OUTPUT)) (designator ""desssignator2"") (property XSTLIB (integer 3) (owner ""ZXC""))", textView);
+		}
+
+		[TestMethod]
+		public void TestKeywordMap()
+		{
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+
+			IKeywordMap keywordMap = factory.CreateKeywordMap(33);
+			string textView = keywordMap.ToEdifText();
+			Assert.AreEqual(@"(keywordMap (keywordLevel 33))", textView);
+		}
+
+		[TestMethod]
+		public void TestNet()
+		{
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+
+			IPortRef portRef = factory.CreatePortRef("portRefName", null);
+			INet net = factory.CreateNet("netName33", new List<IPortRef>() {portRef});
+			string textView = net.ToEdifText();
+			Assert.AreEqual(@"(net netName33 (joined (portRef portRefName))", textView);
+		}
+
+		[TestMethod]
+		public void TestStatus()
+		{
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+
+			IWritten written = factory.CreateWritten(new DateTime(2017, 1, 1, 2, 3, 40), null);
+			IStatus status = factory.CreateStatus(written);
+			string textView = status.ToEdifText();
+			Assert.AreEqual(@"(status (written (timestamp 2017 1 1 02 03 40)))", textView);
+		}
+
+		[TestMethod]
+		public void TestTechnology()
+		{
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+
+			ITechnology technology = factory.CreateTechnology("technologyName");
+			string textView = technology.ToEdifText();
+			Assert.AreEqual(@"(technology (technologyName))", textView);
+		}
+
+		[TestMethod]
+		public void TestWritten()
+		{
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+
+			IComment comment = factory.CreateComment("commentMessage");
+			IWritten written = factory.CreateWritten(new DateTime(2017, 1, 1, 2, 3, 40), new List<IComment>() { comment });
+			string textView = written.ToEdifText();
+			Assert.AreEqual(@"written (timestamp 2017 6 5 10 47 40) (comment ""commentMessage""))", textView);
 		}
 	}
 }

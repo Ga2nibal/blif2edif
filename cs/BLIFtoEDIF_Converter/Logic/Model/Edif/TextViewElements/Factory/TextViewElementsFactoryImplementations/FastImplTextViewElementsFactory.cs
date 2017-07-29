@@ -94,9 +94,10 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory.TextVie
 			return new Design(name, cellRefs, properties);
 		}
 
-		public IEdif CreateEdif(EdifVersion version, EdifLevel level, KeywordMap keywordMap, IStatus status, IExternal external, ILibrary library, IDesign design)
+		public IEdif CreateEdif(string name, IEdifVersion version, IEdifLevel level, IKeywordMap keywordMap, 
+			IStatus status, IExternal external, ILibrary library, IDesign design)
 		{
-			return new Implementation.FastImpl.Edif(version, level, keywordMap, status, external, library, design);
+			return new Implementation.FastImpl.Edif(name, version, level, keywordMap, status, external, library, design);
 		}
 
 		public IEdifLevel CreateEdifLevel(int level)
@@ -109,7 +110,7 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory.TextVie
 			return new EdifVersion(majorVersion, midVersion, minorVersion);
 		}
 
-		public IExternal CreateExternal(string name, int edifLevel, ITechnology technology, IList<ICell> cells)
+		public IExternal CreateExternal(string name, IEdifLevel edifLevel, ITechnology technology, IList<ICell> cells)
 		{
 			return new External(name, edifLevel, technology, cells);
 		}

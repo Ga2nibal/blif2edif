@@ -6,7 +6,7 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 {
 	class External : IExternal
 	{
-		public External(string name, int edifLevel, ITechnology technology, IList<ICell> cells)
+		public External(string name, IEdifLevel edifLevel, ITechnology technology, IList<ICell> cells)
 		{
 			Name = name;
 			EdifLevel = edifLevel;
@@ -17,7 +17,7 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 		#region [IExternal implementation]
 		
 		public string Name { get; }
-		public int EdifLevel { get; }
+		public IEdifLevel EdifLevel { get; }
 		public ITechnology Technology { get; }
 		public IList<ICell> Cells { get; }
 
