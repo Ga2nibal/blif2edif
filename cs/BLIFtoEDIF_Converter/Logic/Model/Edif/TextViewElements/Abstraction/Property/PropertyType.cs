@@ -1,4 +1,4 @@
-﻿namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.CellElements.ViewElements.InterfaceElements
+﻿namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Property
 {
 	public enum PropertyType
 	{
