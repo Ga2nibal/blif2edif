@@ -1,8 +1,9 @@
 ﻿using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Cell;
+using BLIFtoEDIF_Converter.Logic.TextConverter.Edif;
 
 namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Library
 {
-	public interface ILibrary
+	public interface ILibrary : IEdifTextConvertable
 	{
 		EdifLevel Level { get; }
 		ITechnology Technology { get; }

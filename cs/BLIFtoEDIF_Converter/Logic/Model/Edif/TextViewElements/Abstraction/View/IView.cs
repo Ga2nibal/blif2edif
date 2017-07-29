@@ -1,8 +1,10 @@
-﻿namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.View
+﻿using BLIFtoEDIF_Converter.Logic.TextConverter.Edif;
+
+namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.View
 {
-	public interface ICellView
+	public interface IView : IEdifTextConvertable
 	{
 		string Name { get; }
-		CellViewType ViewType { get; }
+		ViewType ViewType { get; }
 	}
 }

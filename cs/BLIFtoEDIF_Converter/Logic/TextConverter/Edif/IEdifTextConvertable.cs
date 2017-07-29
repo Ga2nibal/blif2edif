@@ -1,4 +1,4 @@
-﻿namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction
+﻿namespace BLIFtoEDIF_Converter.Logic.TextConverter.Edif
 {
 	public interface IEdifTextConvertable
 	{

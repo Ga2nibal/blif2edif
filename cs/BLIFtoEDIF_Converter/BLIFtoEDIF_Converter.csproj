@@ -50,6 +50,7 @@
     <Compile Include="init_calculator\LogicFunction.cs" />
     <Compile Include="init_calculator\Port.cs" />
     <Compile Include="init_calculator\PortDirection.cs" />
+    <Compile Include="Logic\TextConverter\Edif\IEdifTextConvertable.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IInstance.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\INet.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Cell\ICellRef.cs" />
@@ -64,8 +65,8 @@
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Port\PortDirection.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Property\PropertyType.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Property\PropertyValueType.cs" />
-    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\View\CellViewType.cs" />
-    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\View\ICellView.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\View\ViewType.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\View\IView.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Cell\CellType.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\EdifLevel.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Cell\ICell.cs" />

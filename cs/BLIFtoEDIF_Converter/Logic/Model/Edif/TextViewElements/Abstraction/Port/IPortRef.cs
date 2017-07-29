@@ -1,6 +1,8 @@
-﻿namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Port
+﻿using BLIFtoEDIF_Converter.Logic.TextConverter.Edif;
+
+namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Port
 {
-	public interface IPortRef
+	public interface IPortRef : IEdifTextConvertable
 	{
 	}
 }

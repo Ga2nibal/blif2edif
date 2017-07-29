@@ -1,8 +1,9 @@
 ﻿using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Library;
+using BLIFtoEDIF_Converter.Logic.TextConverter.Edif;
 
 namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction
 {
-	public interface IEdif
+	public interface IEdif : IEdifTextConvertable
 	{
 		EdifVersion Version { get; }
 		EdifLevel Level { get; }
