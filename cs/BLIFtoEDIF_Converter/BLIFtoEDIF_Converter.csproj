@@ -67,9 +67,18 @@
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\ViewType.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellElements\IView.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\CellType.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\EdifLevel.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\ICell.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IComment.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IDesign.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\EdifVersion.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IEdif.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IExternal.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\ILibrary.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IStatus.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\ITechnology.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IWritten.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\KeywordMap.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

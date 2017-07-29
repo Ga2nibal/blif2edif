@@ -1,7 +1,7 @@
 ﻿namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction
 {
-	public interface ITechnology
+	public interface IComment
 	{
-		string Name { get; }
+		string Text { get; }
 	}
 }

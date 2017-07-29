@@ -1,7 +1,7 @@
 ﻿namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction
 {
-	public interface ITechnology
+	public interface IStatus
 	{
-		string Name { get; }
+		IWritten Written { get; }
 	}
 }
