@@ -2,7 +2,7 @@
 
 namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction
 {
-	interface IKeywordMap : IEdifTextConvertable
+	public interface IKeywordMap : IEdifTextConvertable
 	{
 		int KeywordLevel { get; }
 	}

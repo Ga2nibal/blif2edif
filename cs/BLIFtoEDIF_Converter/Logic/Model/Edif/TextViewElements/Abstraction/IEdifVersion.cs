@@ -2,7 +2,7 @@
 
 namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction
 {
-	interface IEdifVersion : IEdifTextConvertable
+	public interface IEdifVersion : IEdifTextConvertable
 	{
 		int MajorVersion { get; }
 		int MidVersion { get; }

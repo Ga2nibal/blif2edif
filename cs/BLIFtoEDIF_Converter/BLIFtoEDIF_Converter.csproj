@@ -54,6 +54,9 @@
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IEdifVersion.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IKeywordMap.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Instance\IInstanceRef.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Factory\TextViewElementsFactoryCreator.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Factory\TextViewElementsFactoryImplementations\FastImplTextViewElementsFactory.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Factory\ITextViewElementsFactory.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Cell\Cell.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Cell\CellRef.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Comment.cs" />
@@ -76,6 +79,7 @@
     <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\View\View.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\View\ViewRef.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Written.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Factory\Implementations.cs" />
     <Compile Include="Logic\TextConverter\Edif\IEdifTextConvertable.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Instance\IInstance.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\INet.cs" />
