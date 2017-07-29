@@ -13,7 +13,7 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory
 {
 	public interface ITextViewElementsFactory
 	{
-		ICell CreateCell(CellType cellType, IView view);
+		ICell CreateCell(string name, CellType cellType, IView view);
 
 		ICellRef CreateCellRef(string name, ILibraryRef libraryRef);
 
@@ -21,7 +21,7 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory
 
 		IInstanceRef CreateInstanceRef(string referedInstanceName);
 
-		ILibrary CreateLibrary(EdifLevel level, ITechnology technology, ICell cell);
+		ILibrary CreateLibrary(string name, IEdifLevel level, ITechnology technology, ICell cell);
 
 		ILibraryRef CreateLibraryRef(string name);
 
@@ -52,7 +52,7 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory
 
 		IExternal CreateExternal(string name, int edifLevel, ITechnology technology, IList<ICell> cells);
 
-		IInterface CreateInterface(IList<init_calculator.Port> ports, string designator, IList<IProperty> properties);
+		IInterface CreateInterface(IList<IPort> ports, string designator, IList<IProperty> properties);
 
 		IKeywordMap CreateKeywordMap(int keywordLevel);
 

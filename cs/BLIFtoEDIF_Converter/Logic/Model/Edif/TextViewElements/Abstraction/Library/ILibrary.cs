@@ -6,7 +6,8 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Lib
 {
 	public interface ILibrary : IEdifTextConvertable
 	{
-		EdifLevel Level { get; }
+		string Name { get; }
+		IEdifLevel Level { get; }
 		ITechnology Technology { get; }
 		ICell Cell { get; }
 	}

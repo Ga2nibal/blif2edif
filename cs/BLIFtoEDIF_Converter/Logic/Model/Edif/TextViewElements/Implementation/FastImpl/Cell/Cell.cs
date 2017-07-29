@@ -5,14 +5,16 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 {
 	class Cell : ICell
 	{
-		public Cell(CellType cellType, IView view)
+		public Cell(string name, CellType cellType, IView view)
 		{
+			Name = name;
 			CellType = cellType;
 			View = view;
 		}
 
 		#region [ICell implementation]
 
+		public string Name { get; }
 		public CellType CellType { get; }
 		public IView View { get; }
 

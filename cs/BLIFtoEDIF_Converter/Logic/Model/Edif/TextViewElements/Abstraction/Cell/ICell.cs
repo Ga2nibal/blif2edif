@@ -5,6 +5,7 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Cel
 {
 	public interface ICell : IEdifTextConvertable
 	{
+		string Name { get; }
 		CellType CellType { get; }
 		IView View { get; }
 	}

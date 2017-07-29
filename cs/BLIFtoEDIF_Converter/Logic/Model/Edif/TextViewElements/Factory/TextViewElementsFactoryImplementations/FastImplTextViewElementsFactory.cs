@@ -19,9 +19,9 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory.TextVie
 {
 	class FastImplTextViewElementsFactory : ITextViewElementsFactory
 	{
-		public ICell CreateCell(CellType cellType, IView view)
+		public ICell CreateCell(string name, CellType cellType, IView view)
 		{
-			return new Cell(cellType, view);
+			return new Cell(name, cellType, view);
 		}
 
 		public ICellRef CreateCellRef(string name, ILibraryRef libraryRef)
@@ -39,9 +39,9 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory.TextVie
 			return new InstanceRef(referedInstanceName);
 		}
 
-		public ILibrary CreateLibrary(EdifLevel level, ITechnology technology, ICell cell)
+		public ILibrary CreateLibrary(string name, IEdifLevel level, ITechnology technology, ICell cell)
 		{
-			return new Library(level, technology, cell);
+			return new Library(name, level, technology, cell);
 		}
 
 		public ILibraryRef CreateLibraryRef(string name)
@@ -114,7 +114,7 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory.TextVie
 			return new External(name, edifLevel, technology, cells);
 		}
 
-		public IInterface CreateInterface(IList<init_calculator.Port> ports, string designator, IList<IProperty> properties)
+		public IInterface CreateInterface(IList<IPort> ports, string designator, IList<IProperty> properties)
 		{
 			return new Interface(ports, designator, properties);
 		}

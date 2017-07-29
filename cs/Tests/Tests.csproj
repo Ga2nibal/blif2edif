@@ -46,14 +46,18 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ConvertTextViewElementsTests\ConvertTextViewElementsFastimplTest.cs" />
     <Compile Include="InitFunctionTest.cs" />
     <Compile Include="InitTruthMatrix.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ConvertTextViewElementsTests\ConvertTextViewElementsBaseTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLIFtoEDIF_Converter\BLIFtoEDIF_Converter.csproj">

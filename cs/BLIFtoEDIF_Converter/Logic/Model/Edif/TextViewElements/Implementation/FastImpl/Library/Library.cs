@@ -6,8 +6,9 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 {
 	class Library : ILibrary
 	{
-		public Library(EdifLevel level, ITechnology technology, ICell cell)
+		public Library(string name, IEdifLevel level, ITechnology technology, ICell cell)
 		{
+			Name = name;
 			Level = level;
 			Technology = technology;
 			Cell = cell;
@@ -15,7 +16,8 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 
 		#region [ILibrary implementation]
 
-		public EdifLevel Level { get; }
+		public string Name { get; }
+		public IEdifLevel Level { get; }
 		public ITechnology Technology { get; }
 		public ICell Cell { get; }
 
