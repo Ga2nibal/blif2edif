@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BLIFtoEDIF_Converter.init_calculator
 {
-	public class FunctionPareser
+	public class FunctionParser
 	{
 		public static List<Function> GetFunctions(IEnumerable<string> blifSrcLines)
 		{

@@ -56,7 +56,7 @@ namespace BlifToEdifConverterApp
 			{
 				string blifValues = BlifTextBox.Text;
 				List<string> result = Regex.Split(blifValues, "\r\n|\r|\n").Where(str => !string.IsNullOrEmpty(str)).ToList();
-				List<Function> functions = FunctionPareser.GetFunctions(result);
+				List<Function> functions = FunctionParser.GetFunctions(result);
 
 				List<InitFuncValue> initValues = functions.Select(f => f.CalculateInit()).ToList();
 				List<string> stringResults = initValues.Select(iv => iv.ToString()).ToList();

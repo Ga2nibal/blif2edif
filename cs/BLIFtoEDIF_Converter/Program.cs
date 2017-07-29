@@ -52,7 +52,7 @@ namespace BLIFtoEDIF_Converter
 			{
 				string[] lines = File.ReadAllLines(inputFilePath, encoding);
 
-				List<Function> functions = FunctionPareser.GetFunctions(lines);
+				List<Function> functions = FunctionParser.GetFunctions(lines);
 
 				List<InitFuncValue> initValues = functions.Select(f => f.CalculateInit()).ToList();
 				List<string> stringResults = initValues.Select(iv => iv.ToString()).ToList();

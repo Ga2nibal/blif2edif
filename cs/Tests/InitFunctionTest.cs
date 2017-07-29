@@ -163,7 +163,7 @@ namespace Tests
 .end
 ";
 			var srcLines = blifSrc.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-			List<Function> funcs = FunctionPareser.GetFunctions(srcLines);
+			List<Function> funcs = FunctionParser.GetFunctions(srcLines);
 
 			List<InitFuncValue> initValues = funcs.Select(f => f.CalculateInit()).ToList();
 
@@ -266,7 +266,7 @@ BE", result);
 .end
 ";
 			var srcLines = blifSrc.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-			List<Function> funcs = FunctionPareser.GetFunctions(srcLines);
+			List<Function> funcs = FunctionParser.GetFunctions(srcLines);
 
 			List<InitFuncValue> initValues = funcs.Select(f => f.CalculateInit()).ToList();
 
