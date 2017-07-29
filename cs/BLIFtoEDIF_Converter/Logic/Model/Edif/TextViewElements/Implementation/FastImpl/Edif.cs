@@ -1,4 +1,6 @@
-﻿using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction;
+﻿using System;
+using System.Text;
+using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction;
 using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Library;
 
 namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.FastImpl
@@ -7,6 +9,8 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 	{
 		public Edif(string name, IEdifVersion version, IEdifLevel level, IKeywordMap keywordMap, IStatus status, IExternal external, ILibrary library, IDesign design)
 		{
+			if(string.IsNullOrEmpty(name))
+				throw new ArgumentNullException(nameof(name), $"{nameof(name)} is not defined");
 			Name = name;
 			Version = version;
 			Level = level;
@@ -30,7 +34,27 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 
 		public string ToEdifText()
 		{
-			throw new System.NotImplementedException();
+			//(edif adder_as_main (edifVersion ...) (edifLevel ...) (keywordMap ...) (status ...) (external ...) (library ...) (design ...))
+			StringBuilder builder = new StringBuilder();
+			builder.Append("(edif");
+			builder.Append(" ");
+			builder.Append(Name);
+			if (Version != null)
+				builder.Append(" ").Append(Version.ToEdifText());
+			if (Level != null)
+				builder.Append(" ").Append(Level.ToEdifText());
+			if (KeywordMap != null)
+				builder.Append(" ").Append(KeywordMap.ToEdifText());
+			if (Status != null)
+				builder.Append(" ").Append(Status.ToEdifText());
+			if (External != null)
+				builder.Append(" ").Append(External.ToEdifText());
+			if (Library != null)
+				builder.Append(" ").Append(Library.ToEdifText());
+			if (Design != null)
+				builder.Append(" ").Append(Design.ToEdifText());
+			builder.Append(")");
+			return builder.ToString();
 		}
 
 		#endregion [IEdif implmentaion]

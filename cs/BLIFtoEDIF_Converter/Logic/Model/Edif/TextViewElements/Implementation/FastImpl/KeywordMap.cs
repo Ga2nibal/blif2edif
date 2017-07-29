@@ -2,6 +2,7 @@
 
 namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.FastImpl
 {
+	//TODO: Is it map?
 	public class KeywordMap : IKeywordMap
 	{
 		public KeywordMap(int keywordLevel)
@@ -14,7 +15,8 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 		public int KeywordLevel { get; }
 		public string ToEdifText()
 		{
-			throw new System.NotImplementedException();
+			//(keywordMap (keywordLevel 0))
+			return $"(keywordMap (keywordLevel {KeywordLevel}))";
 		}
 
 		#endregion [IKeywordMap implementation]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Instance;
 using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Port;
 
@@ -21,7 +22,21 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 
 		public string ToEdifText()
 		{
-			throw new System.NotImplementedException();
+			StringBuilder builder = new StringBuilder();
+			builder.Append("(portRef");
+			if (Name != null)
+			{
+				builder.Append(" ");
+				builder.Append(Name);
+			}
+			if (InstanceRef != null)
+			{
+				builder.Append(" ");
+				builder.Append(InstanceRef.ToEdifText());
+			}
+			builder.Append(")");
+			//(portRef I (instanceRef x20_IBUF_renamed_4))
+			return builder.ToString();
 		}
 
 		#endregion [IPortRef implementation]

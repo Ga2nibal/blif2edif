@@ -20,7 +20,8 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 
 		public string ToEdifText()
 		{
-			throw new System.NotImplementedException();
+			string viewString = View != null ? " " + View.ToEdifText() : string.Empty;
+			return $"(cell {Name} (cellType {CellType}){viewString})";
 		}
 
 		#endregion [ICell implementation]

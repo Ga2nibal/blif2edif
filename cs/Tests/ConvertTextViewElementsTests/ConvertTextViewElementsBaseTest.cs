@@ -25,7 +25,7 @@ namespace Tests.ConvertTextViewElementsTests
 			ICell cell = factory.CreateCell("test_name", CellType.GENERIC, null);
 
 			string textView = cell.ToEdifText();
-			Assert.AreEqual("(cell cm82a (cellType GENERIC))", textView);
+			Assert.AreEqual("(cell test_name (cellType GENERIC))", textView);
 		}
 
 		//TODO:
@@ -48,11 +48,11 @@ namespace Tests.ConvertTextViewElementsTests
 			ports.Add(port0);
 			ports.Add(port1);
 			IInterface @interface = factory.CreateInterface(ports, null, null);
-			IView view = factory.CreateView("PRIM", ViewType.NETLIST, null, null);
+			IView view = factory.CreateView("PRIM", ViewType.NETLIST, @interface, null);
 			ICell cell = factory.CreateCell("LUT2", CellType.GENERIC, view);
 
 			string textView = cell.ToEdifText();
-			Assert.AreEqual(@"(cell LUT2 (cellType GENERIC) (view PRIM(viewType NETLIST) (interface (port I0(direction INPUT)) (port I1(direction INPUT)) (port O(direction OUTPUT)))))", textView);
+			Assert.AreEqual(@"(cell LUT2 (cellType GENERIC) (view PRIM (viewType NETLIST) (interface (port I0 (direction INPUT)) (port I1 (direction INPUT)))))", textView);
 		}
 
 		[TestMethod]
@@ -102,7 +102,7 @@ namespace Tests.ConvertTextViewElementsTests
 			ILibrary library = factory.CreateLibrary("libraryname", level, technology, cell);
 
 			string textView = library.ToEdifText();
-			Assert.AreEqual(@"(library libraryname (edifLevel 0) (technology (tech)) (cell cellname))", textView);
+			Assert.AreEqual(@"(library libraryname (edifLevel 0) (technology (tech)) (cell cellname (cellType GENERIC)))", textView);
 		}
 
 		[TestMethod]
@@ -177,7 +177,7 @@ namespace Tests.ConvertTextViewElementsTests
 			IInterface inInterface = factory.CreateInterface(null, null, null);
 			IView view = factory.CreateView("viewname", ViewType.NETLIST, inInterface, contents);
 			string textView = view.ToEdifText();
-			Assert.AreEqual(@"(view viewname (viewType NETLIST) (interface) (contents)", textView);
+			Assert.AreEqual(@"(view viewname (viewType NETLIST) (interface) (contents))", textView);
 		}
 
 		[TestMethod]
@@ -244,7 +244,7 @@ namespace Tests.ConvertTextViewElementsTests
 			IDesign design = factory.CreateDesign("designname", null, null);
 			IEdif edif = factory.CreateEdif("adder_as_main", edifVersion, edifLevel, keywordMap, status, external, library, design);
 			string textView = edif.ToEdifText();
-			Assert.AreEqual(@"(edif adder_as_main (edifVersion 2 0 0) (edifLevel 1) (keywordMap (keywordLevel 2)) (status) (external externalName) (library library_name (edifLevel 1)) (design designname)",
+			Assert.AreEqual(@"(edif adder_as_main (edifVersion 2 0 0) (edifLevel 1) (keywordMap (keywordLevel 2)) (status) (external externalName (edifLevel 1)) (library library_name (edifLevel 1)) (design designname))",
 				textView);
 		}
 
@@ -255,7 +255,7 @@ namespace Tests.ConvertTextViewElementsTests
 
 			IEdifLevel edifLevel = factory.CreateEdifLevel(2);
 			string textView = edifLevel.ToEdifText();
-			Assert.AreEqual(@"(edifLevel 1)", textView);
+			Assert.AreEqual(@"(edifLevel 2)", textView);
 		}
 
 		[TestMethod]
@@ -278,7 +278,7 @@ namespace Tests.ConvertTextViewElementsTests
 			IEdifLevel edifLevel = factory.CreateEdifLevel(0);
 			IExternal external = factory.CreateExternal("externalName", edifLevel, technology, new List<ICell>() { cell });
 			string textView = external.ToEdifText();
-			Assert.AreEqual(@"external externalName (edifLevel 0) (technology (ttt)) (cell testCell))", textView);
+			Assert.AreEqual(@"(external externalName (edifLevel 0) (technology (ttt)) (cell testCell (cellType GENERIC)))", textView);
 		}
 
 		[TestMethod]
@@ -291,7 +291,7 @@ namespace Tests.ConvertTextViewElementsTests
 			IProperty property = factory.CreateProperty(PropertyType.XSTLIB, propertyValue, "ZXC");
 			IInterface inInterface = factory.CreateInterface(new List<IPort>() {port}, "desssignator2", new List<IProperty>() {property});
 			string textView = inInterface.ToEdifText();
-			Assert.AreEqual(@"(interface (port port1 (direction OUTPUT)) (designator ""desssignator2"") (property XSTLIB (integer 3) (owner ""ZXC""))", textView);
+			Assert.AreEqual(@"(interface (port port1 (direction OUTPUT)) (designator ""desssignator2"") (property XSTLIB (integer 3) (owner ""ZXC"")))", textView);
 		}
 
 		[TestMethod]
@@ -312,7 +312,7 @@ namespace Tests.ConvertTextViewElementsTests
 			IPortRef portRef = factory.CreatePortRef("portRefName", null);
 			INet net = factory.CreateNet("netName33", new List<IPortRef>() {portRef});
 			string textView = net.ToEdifText();
-			Assert.AreEqual(@"(net netName33 (joined (portRef portRefName))", textView);
+			Assert.AreEqual(@"(net netName33 (joined (portRef portRefName)))", textView);
 		}
 
 		[TestMethod]
@@ -342,9 +342,9 @@ namespace Tests.ConvertTextViewElementsTests
 			ITextViewElementsFactory factory = GetTextViewElementsFactory();
 
 			IComment comment = factory.CreateComment("commentMessage");
-			IWritten written = factory.CreateWritten(new DateTime(2017, 1, 1, 2, 3, 40), new List<IComment>() { comment });
+			IWritten written = factory.CreateWritten(new DateTime(2017, 6, 5, 10, 47, 4), new List<IComment>() { comment });
 			string textView = written.ToEdifText();
-			Assert.AreEqual(@"written (timestamp 2017 6 5 10 47 40) (comment ""commentMessage""))", textView);
+			Assert.AreEqual(@"(written (timestamp 2017 6 5 10 47 04) (comment ""commentMessage""))", textView);
 		}
 	}
 }

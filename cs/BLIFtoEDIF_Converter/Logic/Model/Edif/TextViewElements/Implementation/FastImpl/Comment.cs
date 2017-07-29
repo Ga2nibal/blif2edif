@@ -15,7 +15,8 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 
 		public string ToEdifText()
 		{
-			throw new System.NotImplementedException();
+			//(comment "represented by this netlist.")
+			return $"(comment \"{Text}\")";
 		}
 
 		#endregion [IComment implementation]

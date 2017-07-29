@@ -21,7 +21,9 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 
 		public string ToEdifText()
 		{
-			throw new System.NotImplementedException();
+			string libraryRefString = LibraryRef != null ? " " + LibraryRef.ToEdifText() : string.Empty;
+			//cellRef LUT5 (libraryRef UNISIMS))
+			return $"(cellRef {Name}{libraryRefString})";
 		}
 
 		#endregion [ICellRef implementation]

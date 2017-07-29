@@ -26,7 +26,8 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 
 		public string ToEdifText()
 		{
-			throw new NotImplementedException();
+			//(edifVersion 2 0 0)
+			return $"(edifVersion {MajorVersion} {MidVersion} {MinorVersion})";
 		}
 
 		#endregion [IEdifVersion implementation]

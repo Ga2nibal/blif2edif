@@ -20,7 +20,8 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 
 		public string ToEdifText()
 		{
-			throw new System.NotImplementedException();
+			//(port c1 (direction INPUT))
+			return $"(port {Name} (direction {Direction}))";
 		}
 
 		#endregion [IPort implementation]

@@ -15,7 +15,11 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 
 		public string ToEdifText()
 		{
-			throw new System.NotImplementedException();
+			//(status (written ..))
+			if (Written != null)
+				return $"(status {Written.ToEdifText()})";
+			else
+				return "(status)";
 		}
 
 		#endregion [IStatus implementation]

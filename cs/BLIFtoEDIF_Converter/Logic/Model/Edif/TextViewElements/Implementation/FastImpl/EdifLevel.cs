@@ -14,7 +14,8 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 		public int Level { get; }
 		public string ToEdifText()
 		{
-			throw new System.NotImplementedException();
+			//(edifLevel 0)
+			return $"(edifLevel {Level})";
 		}
 
 		#endregion [IEdifLevel implementation]

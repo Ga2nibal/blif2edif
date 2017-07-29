@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction;
 using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Cell;
 
@@ -8,6 +11,8 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 	{
 		public External(string name, IEdifLevel edifLevel, ITechnology technology, IList<ICell> cells)
 		{
+			if(string.IsNullOrEmpty(name))
+				throw new ArgumentNullException(nameof(name), $"{nameof(name)} is not defined");
 			Name = name;
 			EdifLevel = edifLevel;
 			Technology = technology;
@@ -23,7 +28,17 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 
 		public string ToEdifText()
 		{
-			throw new System.NotImplementedException();
+			StringBuilder builder = new StringBuilder();
+			builder.Append("(external").Append(" ").Append(Name);
+			if (EdifLevel != null)
+				builder.Append(" ").Append(EdifLevel.ToEdifText());
+			if (Technology != null)
+				builder.Append(" ").Append(Technology.ToEdifText());
+			if (Cells != null && Cells.Count > 0)
+				builder.Append(" ").Append(string.Join(" ", Cells.Select(i => i.ToEdifText())));
+			builder.Append(")");
+			//(external name (edifLevel 0) (technology(numberDefinition)) (cell LUT5))
+			return builder.ToString();
 		}
 
 		#endregion [IExternal implementation]

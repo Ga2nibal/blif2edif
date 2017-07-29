@@ -25,7 +25,10 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 
 		public string ToEdifText()
 		{
-			throw new System.NotImplementedException();
+			string interfaceString = Interface != null ? " " + Interface.ToEdifText() : string.Empty;
+			string contentsString = Contents != null ? " " + Contents.ToEdifText() : string.Empty;
+			//(view view_1 (viewType NETLIST) (interface..) (contents..))
+			return $"(view {Name} (viewType {ViewType}){interfaceString}{contentsString})";
 		}
 
 		#endregion [IView implementaion]

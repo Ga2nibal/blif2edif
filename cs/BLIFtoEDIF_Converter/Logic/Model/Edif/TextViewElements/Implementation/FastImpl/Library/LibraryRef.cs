@@ -18,7 +18,8 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 
 		public string ToEdifText()
 		{
-			throw new System.NotImplementedException();
+			//(libraryRef UNISIMS)
+			return $"(libraryRef {Name})";
 		}
 		
 		#endregion [ILibraryRef implementation]
