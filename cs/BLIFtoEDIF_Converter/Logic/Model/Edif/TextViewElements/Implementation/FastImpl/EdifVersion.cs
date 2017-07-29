@@ -1,9 +1,9 @@
 ﻿using System;
-using BLIFtoEDIF_Converter.Logic.TextConverter.Edif;
+using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction;
 
-namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction
+namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.FastImpl
 {
-	public class EdifVersion : IEdifTextConvertable
+	public class EdifVersion : IEdifVersion
 	{
 		public EdifVersion(int majorVersion, int midVersion, int minorVersion)
 		{
@@ -18,12 +18,17 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction
 			MinorVersion = minorVersion;
 		}
 
+		#region [IEdifVersion implementation]
+		
 		public int MajorVersion { get; }
 		public int MidVersion { get; }
 		public int MinorVersion { get; }
+
 		public string ToEdifText()
 		{
 			throw new NotImplementedException();
 		}
+
+		#endregion [IEdifVersion implementation]
 	}
 }

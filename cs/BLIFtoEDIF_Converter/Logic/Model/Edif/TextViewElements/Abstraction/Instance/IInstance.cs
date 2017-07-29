@@ -3,7 +3,7 @@ using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Propert
 using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.View;
 using BLIFtoEDIF_Converter.Logic.TextConverter.Edif;
 
-namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction
+namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Instance
 {
 	public interface IInstance : IEdifTextConvertable
 	{

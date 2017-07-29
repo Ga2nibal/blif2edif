@@ -50,8 +50,34 @@
     <Compile Include="init_calculator\LogicFunction.cs" />
     <Compile Include="init_calculator\Port.cs" />
     <Compile Include="init_calculator\PortDirection.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IEdifLevel.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IEdifVersion.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IKeywordMap.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Instance\IInstanceRef.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Cell\Cell.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Cell\CellRef.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Comment.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Contents.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Design.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Edif.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\External.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Instance\Instance.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Instance\InstanceRef.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Interface.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Library\Library.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Library\LibraryRef.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Net.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Port\Port.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Port\PortRef.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Property\Property.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Property\PropertyValue.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Status.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Texhnology.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\View\View.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\View\ViewRef.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\Written.cs" />
     <Compile Include="Logic\TextConverter\Edif\IEdifTextConvertable.cs" />
-    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IInstance.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Instance\IInstance.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\INet.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Cell\ICellRef.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Library\ILibraryRef.cs" />
@@ -68,18 +94,18 @@
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\View\ViewType.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\View\IView.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Cell\CellType.cs" />
-    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\EdifLevel.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\EdifLevel.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Cell\ICell.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IComment.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IDesign.cs" />
-    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\EdifVersion.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\EdifVersion.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IEdif.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IExternal.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\Library\ILibrary.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IStatus.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\ITechnology.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IWritten.cs" />
-    <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\KeywordMap.cs" />
+    <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\KeywordMap.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -88,7 +114,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Logic\Model\Blif\" />
-    <Folder Include="Logic\Model\Edif\TextViewElements\Implementation\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
