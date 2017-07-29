@@ -6,5 +6,7 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Vie
 	{
 		string Name { get; }
 		ViewType ViewType { get; }
+		IInterface Interface { get; }
+		IContents Contents { get; }
 	}
 }
