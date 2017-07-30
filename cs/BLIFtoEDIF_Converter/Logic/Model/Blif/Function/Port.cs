@@ -11,7 +11,7 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Blif.Function
 			Direction = portDirection;
 		}
 
-		public string Name { get; }
+		public string Name { get; set; }
 		public PortDirection Direction { get; }
 	}
 }

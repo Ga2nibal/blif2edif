@@ -34,6 +34,11 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory.TextVie
 			return new Instance(name, viewRef, properties);
 		}
 
+		public IInstance CreateInstance(string name, string renamedSynonym, IViewRef viewRef, IList<IProperty> properties)
+		{
+			return new Instance(name, renamedSynonym, viewRef, properties);
+		}
+
 		public IInstanceRef CreateInstanceRef(string referedInstanceName)
 		{
 			return new InstanceRef(referedInstanceName);

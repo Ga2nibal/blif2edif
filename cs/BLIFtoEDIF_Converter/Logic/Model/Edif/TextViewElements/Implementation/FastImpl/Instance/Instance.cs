@@ -18,9 +18,20 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 			Properties = properties;
 		}
 
+		public Instance(string name, string renamedSynonym, IViewRef viewRef, IList<IProperty> properties)
+		{
+			if (string.IsNullOrEmpty(name))
+				throw new ArgumentNullException(nameof(name), $"{nameof(name)} is not defined");
+			Name = name;
+			RenamedSynonym = renamedSynonym;
+			ViewRef = viewRef;
+			Properties = properties;
+		}
+
 		#region [IInstance implementation]
-		
+
 		public string Name { get; }
+		public string RenamedSynonym { get; }
 		public IViewRef ViewRef { get; }
 		public IList<IProperty> Properties { get; }
 
@@ -31,11 +42,14 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
               (property XSTLIB (boolean (true)) (owner "Xilinx"))
               (property INIT (string "AABAAEA8") (owner "Xilinx"))
             )*/
+			string nameStr = Name;
+			if (!string.IsNullOrEmpty(RenamedSynonym))
+				nameStr = $"(rename {RenamedSynonym} \"{Name}\")";
 			string propertiesString = Properties != null && Properties.Count > 0
 				? " " + string.Join(" ", Properties.Select(p => p.ToEdifText()))
 				: String.Empty;
 			string viewRefString = ViewRef != null ? " " + ViewRef.ToEdifText() : string.Empty;
-			return $"(instance {Name}{viewRefString}{propertiesString})";
+			return $"(instance {nameStr}{viewRefString}{propertiesString})";
 		}
 
 		#endregion  [IInstance implementation]

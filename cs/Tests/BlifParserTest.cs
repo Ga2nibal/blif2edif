@@ -1,6 +1,8 @@
 ﻿using System;
+using BLIFtoEDIF_Converter.Logic;
 using BLIFtoEDIF_Converter.Logic.Model.Blif;
 using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
+using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.FastImpl;
 using BLIFtoEDIF_Converter.Parser.Blif;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -51,7 +53,7 @@ namespace Tests
 -01 1
 .end
 ";
-			var srcLines = blifSrc.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+			var srcLines = blifSrc.Split(new[] {'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries);
 			Blif blif = BlifParser.GetBlif(srcLines);
 
 			Assert.IsNotNull(blif);

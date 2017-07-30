@@ -81,6 +81,20 @@ namespace Tests.ConvertTextViewElementsTests
 		}
 
 		[TestMethod]
+		public void TestInstanceWithSynonym()
+		{
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+
+			IViewRef viewRef = factory.CreateViewRef("TESTVIEWREF", null);
+			IPropertyValue propertyValue = factory.CreatePropertyValue(1, PropertyValueType.Integer);
+			IProperty property = factory.CreateProperty(PropertyType.INIT, propertyValue, "OWNER");
+			IInstance instance = factory.CreateInstance("TESTNAME", "TESTNAME_RENAMED", viewRef, new List<IProperty>() { property });
+
+			string textView = instance.ToEdifText();
+			Assert.AreEqual(@"(instance (rename TESTNAME_RENAMED ""TESTNAME"") (viewRef TESTVIEWREF) (property INIT (integer 1) (owner ""OWNER"")))", textView);
+		}
+
+		[TestMethod]
 		public void TestInstanceRef()
 		{
 			ITextViewElementsFactory factory = GetTextViewElementsFactory();

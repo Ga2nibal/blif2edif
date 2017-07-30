@@ -19,6 +19,8 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory
 
 		IInstance CreateInstance(string name, IViewRef viewRef, IList<IProperty> properties);
 
+		IInstance CreateInstance(string name, string renamedSynonym, IViewRef viewRef, IList<IProperty> properties);
+
 		IInstanceRef CreateInstanceRef(string referedInstanceName);
 
 		ILibrary CreateLibrary(string name, IEdifLevel level, ITechnology technology, ICell cell);

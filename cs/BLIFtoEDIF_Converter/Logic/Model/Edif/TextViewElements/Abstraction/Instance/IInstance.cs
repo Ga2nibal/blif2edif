@@ -8,6 +8,7 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Ins
 	public interface IInstance : IEdifTextConvertable
 	{
 		string Name { get; }
+		string RenamedSynonym { get; }
 		IViewRef ViewRef { get; }
 		IList<IProperty> Properties { get; } 
 	}

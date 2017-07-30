@@ -15,8 +15,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using BLIFtoEDIF_Converter.InitCalculator;
+using BLIFtoEDIF_Converter.Logic;
+using BLIFtoEDIF_Converter.Logic.Model.Blif;
 using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
+using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction;
+using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory;
 using BLIFtoEDIF_Converter.Parser.Blif;
+using BLIFtoEDIF_Converter.Util;
 using Microsoft.Win32;
 
 namespace BlifToEdifConverterApp
@@ -26,6 +31,9 @@ namespace BlifToEdifConverterApp
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private readonly ITextViewElementsFactory _edifFactory =
+			TextViewElementsFactoryCreator.CreaTextViewElementsFactory(Implementations.FastImpl);
+
 		private readonly OpenFileDialog _blifOpenFileDialog = new OpenFileDialog()
 		{
 			Filter = "Blif Files (blif)|*.blif;*.BLIF;"
@@ -42,7 +50,7 @@ namespace BlifToEdifConverterApp
 		};
 		private readonly SaveFileDialog _edifSaveFileDialog = new SaveFileDialog()
 		{
-			Filter = "Edif Files (blif)|*.edif;*.EDIF|Init Files (init)|*.init;*.INIT;"
+			Filter = "Edif Files (edif)|*.edif;*.EDIF|Init Files (init)|*.init;*.INIT;"
 		};
 
 		private Encoding _encoding = Encoding.UTF8;
@@ -118,7 +126,25 @@ namespace BlifToEdifConverterApp
 
 		private void ConvertToEdif_OnClick(object sender, RoutedEventArgs e)
 		{
-			MessageBox.Show("Not implemented yet");
+			try
+			{
+				string blifValues = BlifTextBox.Text;
+				List<string> result = Regex.Split(blifValues, "\r\n|\r|\n").Where(str => !string.IsNullOrEmpty(str)).ToList();
+				Blif blif = BlifParser.GetBlif(result);
+
+				string renameLog;
+				IEdif edif = blif.ToEdif(_edifFactory, out renameLog);
+				
+				string edifSrc = edif.ToEdifText();
+				string formattedEdifSrc = SrcCodeFormatter.FormatEdifCode(edifSrc);
+				
+				EdifTextBox.Text = "# RenameLog: " + renameLog + Environment.NewLine + formattedEdifSrc;
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"sorry. show exception message to developer. {Environment.NewLine}Exceptiom: {ex.ToString()}", "BLIF to EDIF Converter",
+					MessageBoxButton.OK, MessageBoxImage.Warning);
+			}
 		}
 
 		private void RadioUTFEncoding_OnChecked(object sender, RoutedEventArgs e)

@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="InitCalculator\InitCalculator.cs" />
+    <Compile Include="Logic\BlifToEdifModelConverter.cs" />
     <Compile Include="Logic\Model\Blif\Function\Function.cs" />
     <Compile Include="Parser\Blif\BlifParser.cs" />
     <Compile Include="InitCalculator\Helpers.cs" />
@@ -120,6 +121,8 @@
     <Compile Include="Logic\Model\Edif\TextViewElements\Implementation\FastImpl\KeywordMap.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\EdifHelper.cs" />
+    <Compile Include="Util\SrcCodeFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

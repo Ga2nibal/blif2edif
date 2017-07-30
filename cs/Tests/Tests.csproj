@@ -53,12 +53,14 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="BlifToEdifConverter\BlifToEdifConverterFastImplTest.cs" />
     <Compile Include="ConvertTextViewElementsTests\ConvertTextViewElementsFastimplTest.cs" />
     <Compile Include="InitFunctionTest.cs" />
     <Compile Include="InitTruthMatrix.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConvertTextViewElementsTests\ConvertTextViewElementsBaseTest.cs" />
     <Compile Include="BlifParserTest.cs" />
+    <Compile Include="BlifToEdifConverter\BlifToEdifConverterBaseTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BLIFtoEDIF_Converter\BLIFtoEDIF_Converter.csproj">
