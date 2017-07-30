@@ -1,6 +1,17 @@
-﻿namespace BLIFtoEDIF_Converter.Logic.Model.Blif
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace BLIFtoEDIF_Converter.Logic.Model.Blif
 {
-	class Outputs
+	public class Outputs
 	{
+		public Outputs(IReadOnlyList<Output> outputList)
+		{
+			if(null == outputList)
+				outputList = new List<Output>();
+			OutputList = outputList.ToList();
+		}
+
+		public IReadOnlyList<Output> OutputList { get; } 
 	}
 }

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BLIFtoEDIF_Converter.init_calculator;
+using BLIFtoEDIF_Converter.InitCalculator;
+using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests
@@ -15,7 +16,7 @@ namespace Tests
 		public void Truth2nTest()
 		{
 			int n = 2;
-			int[][] initFunc = Function.CreateInitTruthMatrix(n);
+			int[][] initFunc = InitCalculator.CreateInitTruthMatrix(n);
 
 			Assert.AreEqual(Math.Pow(2, n), initFunc.Length);
 
@@ -42,7 +43,7 @@ namespace Tests
 		public void Truth3nTest()
 		{
 			int n = 3;
-			int[][] initFunc = Function.CreateInitTruthMatrix(n);
+			int[][] initFunc = InitCalculator.CreateInitTruthMatrix(n);
 
 			Assert.AreEqual(Math.Pow(2, n), initFunc.Length);
 

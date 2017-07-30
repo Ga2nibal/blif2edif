@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using BLIFtoEDIF_Converter.init_calculator;
+using BLIFtoEDIF_Converter.InitCalculator;
+using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
 
 namespace BLIFtoEDIF_Converter
 {

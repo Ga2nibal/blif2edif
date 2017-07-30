@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
 
-namespace BLIFtoEDIF_Converter.init_calculator
+namespace BLIFtoEDIF_Converter.InitCalculator
 {
 	public static class Helpers
 	{

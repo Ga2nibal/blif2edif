@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BLIFtoEDIF_Converter.init_calculator;
+using BLIFtoEDIF_Converter.InitCalculator;
+using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests
@@ -12,7 +13,7 @@ namespace Tests
 		[TestMethod]
 		public void TestMethod1()
 		{
-			LogicFunction logicFunction = LogicFunction.FromStringDef(
+			LogicFunction logicFunction = FunctionParser.FromStringDef(
 				new string[]
 				{
 					"01- 1",
@@ -30,7 +31,7 @@ namespace Tests
 		[TestMethod]
 		public void TestMethod2()
 		{
-			LogicFunction logicFunction = LogicFunction.FromStringDef(
+			LogicFunction logicFunction = FunctionParser.FromStringDef(
 				new string[]
 				{
 					"11- 1",
@@ -48,7 +49,7 @@ namespace Tests
 		[TestMethod]
 		public void TestMethod3()
 		{
-			LogicFunction logicFunction = LogicFunction.FromStringDef(
+			LogicFunction logicFunction = FunctionParser.FromStringDef(
 				new string[]
 				{
 					"01-- 1",
@@ -67,7 +68,7 @@ namespace Tests
 		[TestMethod]
 		public void TestMethod4()
 		{
-			LogicFunction logicFunction = LogicFunction.FromStringDef(
+			LogicFunction logicFunction = FunctionParser.FromStringDef(
 				new string[]
 				{
 					"00-- 1",
@@ -87,7 +88,7 @@ namespace Tests
 		[TestMethod]
 		public void TestMethod5()
 		{
-			LogicFunction logicFunction = LogicFunction.FromStringDef(
+			LogicFunction logicFunction = FunctionParser.FromStringDef(
 				new string[]
 				{
 					"01- 1",
@@ -105,7 +106,7 @@ namespace Tests
 		[TestMethod]
 		public void TestMethod6()
 		{
-			LogicFunction logicFunction = LogicFunction.FromStringDef(
+			LogicFunction logicFunction = FunctionParser.FromStringDef(
 				new string[]
 				{
 					"01- 1",

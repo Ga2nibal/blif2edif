@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace BLIFtoEDIF_Converter.init_calculator
+namespace BLIFtoEDIF_Converter.InitCalculator
 {
 	public class InitFuncValue
 	{
@@ -9,7 +9,6 @@ namespace BLIFtoEDIF_Converter.init_calculator
 
 		public InitFuncValue(long value)
 		{
-			//TODO: check six bytes
 			Value = value;
 		}
 

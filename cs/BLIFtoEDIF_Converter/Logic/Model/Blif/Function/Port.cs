@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BLIFtoEDIF_Converter.init_calculator
+namespace BLIFtoEDIF_Converter.Logic.Model.Blif.Function
 {
 	public class Port
 	{
@@ -14,6 +14,4 @@ namespace BLIFtoEDIF_Converter.init_calculator
 		public string Name { get; }
 		public PortDirection Direction { get; }
 	}
-
-	
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
 
-namespace BLIFtoEDIF_Converter.init_calculator
+namespace BLIFtoEDIF_Converter.InitCalculator
 {
 	public class FunctionParser
 	{
@@ -25,7 +27,7 @@ namespace BLIFtoEDIF_Converter.init_calculator
 				{
 					if (functionDefStr != null)
 					{
-						LogicFunction logicFunction = LogicFunction.FromStringDef(functionBody);
+						LogicFunction logicFunction = FromStringDef(functionBody);
 						functionBody.Clear();
 						Port[] ports = Helpers.FromFuncDefStr(functionDefStr);
 						Function func = new Function(ports, logicFunction);
@@ -40,6 +42,30 @@ namespace BLIFtoEDIF_Converter.init_calculator
 			}
 
 			return result;
+		}
+		public static LogicFunction FromStringDef(IEnumerable<string> logicFunctionStringDef)
+		{
+			List<LogicFunctionRow> logicFunctionRows =
+				logicFunctionStringDef.Select(FromStringDef).ToList();
+
+			LogicFunction result = new LogicFunction(logicFunctionRows);
+			return result;
+		}
+
+		public static LogicFunctionRow FromStringDef(string stringDef)
+		{
+			string[] splittedInOutDef =
+				stringDef.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+			if (splittedInOutDef.Length != 2)
+				throw new ArgumentException($"can not split '{nameof(stringDef)}' to input and output. " +
+											$"stringDef: " + stringDef);
+			List<bool?> rowData =
+				splittedInOutDef[0].Select(d => d.ToLogicFunctionRowElement()).ToList();
+
+			rowData.Add(splittedInOutDef[1].ToLogicFunctionRowElement());
+
+			LogicFunctionRow logicFunctionRow = new LogicFunctionRow(rowData);
+			return logicFunctionRow;
 		}
 	}
 }

@@ -43,13 +43,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="init_calculator\Function.cs" />
-    <Compile Include="init_calculator\FunctionPareser.cs" />
-    <Compile Include="init_calculator\Helpers.cs" />
-    <Compile Include="init_calculator\InitFuncValue.cs" />
-    <Compile Include="init_calculator\LogicFunction.cs" />
-    <Compile Include="init_calculator\Port.cs" />
-    <Compile Include="init_calculator\PortDirection.cs" />
+    <Compile Include="InitCalculator\InitCalculator.cs" />
+    <Compile Include="Logic\Model\Blif\Function\Function.cs" />
+    <Compile Include="InitCalculator\FunctionParser.cs" />
+    <Compile Include="InitCalculator\Helpers.cs" />
+    <Compile Include="InitCalculator\InitFuncValue.cs" />
+    <Compile Include="Logic\Model\Blif\Function\LogicFunction.cs" />
+    <Compile Include="Logic\Model\Blif\Function\LogicFunctionRow.cs" />
+    <Compile Include="Logic\Model\Blif\Function\Port.cs" />
+    <Compile Include="Logic\Model\Blif\Function\PortDirection.cs" />
+    <Compile Include="Logic\Model\Blif\Blif.cs" />
+    <Compile Include="Logic\Model\Blif\Input.cs" />
+    <Compile Include="Logic\Model\Blif\Inputs.cs" />
+    <Compile Include="Logic\Model\Blif\Model.cs" />
+    <Compile Include="Logic\Model\Blif\Output.cs" />
+    <Compile Include="Logic\Model\Blif\Outputs.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IEdifLevel.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IEdifVersion.cs" />
     <Compile Include="Logic\Model\Edif\TextViewElements\Abstraction\IKeywordMap.cs" />
@@ -116,9 +124,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Logic\Model\Blif\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

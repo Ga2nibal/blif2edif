@@ -14,7 +14,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using BLIFtoEDIF_Converter.init_calculator;
+using BLIFtoEDIF_Converter.InitCalculator;
+using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
 using Microsoft.Win32;
 
 namespace BlifToEdifConverterApp
