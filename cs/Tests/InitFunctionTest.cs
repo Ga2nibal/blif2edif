@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BLIFtoEDIF_Converter.InitCalculator;
 using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
+using BLIFtoEDIF_Converter.Parser.Blif;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests
@@ -13,7 +14,7 @@ namespace Tests
 		[TestMethod]
 		public void TestMethod1()
 		{
-			LogicFunction logicFunction = FunctionParser.FromStringDef(
+			LogicFunction logicFunction = BlifParser.FromStringDef(
 				new string[]
 				{
 					"01- 1",
@@ -31,7 +32,7 @@ namespace Tests
 		[TestMethod]
 		public void TestMethod2()
 		{
-			LogicFunction logicFunction = FunctionParser.FromStringDef(
+			LogicFunction logicFunction = BlifParser.FromStringDef(
 				new string[]
 				{
 					"11- 1",
@@ -49,7 +50,7 @@ namespace Tests
 		[TestMethod]
 		public void TestMethod3()
 		{
-			LogicFunction logicFunction = FunctionParser.FromStringDef(
+			LogicFunction logicFunction = BlifParser.FromStringDef(
 				new string[]
 				{
 					"01-- 1",
@@ -68,7 +69,7 @@ namespace Tests
 		[TestMethod]
 		public void TestMethod4()
 		{
-			LogicFunction logicFunction = FunctionParser.FromStringDef(
+			LogicFunction logicFunction = BlifParser.FromStringDef(
 				new string[]
 				{
 					"00-- 1",
@@ -88,7 +89,7 @@ namespace Tests
 		[TestMethod]
 		public void TestMethod5()
 		{
-			LogicFunction logicFunction = FunctionParser.FromStringDef(
+			LogicFunction logicFunction = BlifParser.FromStringDef(
 				new string[]
 				{
 					"01- 1",
@@ -106,7 +107,7 @@ namespace Tests
 		[TestMethod]
 		public void TestMethod6()
 		{
-			LogicFunction logicFunction = FunctionParser.FromStringDef(
+			LogicFunction logicFunction = BlifParser.FromStringDef(
 				new string[]
 				{
 					"01- 1",
@@ -164,7 +165,7 @@ namespace Tests
 .end
 ";
 			var srcLines = blifSrc.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-			List<Function> funcs = FunctionParser.GetFunctions(srcLines);
+			List<Function> funcs = BlifParser.GetFunctions(srcLines);
 
 			List<InitFuncValue> initValues = funcs.Select(f => f.CalculateInit()).ToList();
 
@@ -267,7 +268,7 @@ BE", result);
 .end
 ";
 			var srcLines = blifSrc.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-			List<Function> funcs = FunctionParser.GetFunctions(srcLines);
+			List<Function> funcs = BlifParser.GetFunctions(srcLines);
 
 			List<InitFuncValue> initValues = funcs.Select(f => f.CalculateInit()).ToList();
 

@@ -5,7 +5,7 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Blif
 {
 	public class Outputs
 	{
-		public Outputs(IReadOnlyList<Output> outputList)
+		public Outputs(IEnumerable<Output> outputList)
 		{
 			if(null == outputList)
 				outputList = new List<Output>();

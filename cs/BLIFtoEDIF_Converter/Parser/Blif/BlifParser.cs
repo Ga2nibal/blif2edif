@@ -1,12 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BLIFtoEDIF_Converter.InitCalculator;
+using BLIFtoEDIF_Converter.Logic.Model.Blif;
 using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
 
-namespace BLIFtoEDIF_Converter.InitCalculator
+namespace BLIFtoEDIF_Converter.Parser.Blif
 {
-	public class FunctionParser
+	public class BlifParser
 	{
+		public static Logic.Model.Blif.Blif GetBlif(IEnumerable<string> blifSrcLines)
+		{
+			if (null == blifSrcLines)
+				throw new ArgumentNullException(nameof(blifSrcLines), $"{nameof(blifSrcLines)} is not defined");
+
+			List<Function> result = GetFunctions(blifSrcLines);
+
+			Model model = null;
+			Inputs inputs = null;
+			Outputs outputs = null;
+			foreach (string blifSrcLine in blifSrcLines)
+			{
+				if (model == null)
+					TryGetBlifModel(blifSrcLine, out model);
+				if (inputs == null)
+					TryGetInputs(blifSrcLine, out inputs);
+				if (outputs == null)
+					TryGetOutputs(blifSrcLine, out outputs);
+				if(model != null && inputs != null && outputs != null)
+					break;
+			}
+
+			return new Logic.Model.Blif.Blif(model, inputs, outputs, result);
+		}
+
 		public static List<Function> GetFunctions(IEnumerable<string> blifSrcLines)
 		{
 			if(null == blifSrcLines)
@@ -43,6 +70,7 @@ namespace BLIFtoEDIF_Converter.InitCalculator
 
 			return result;
 		}
+
 		public static LogicFunction FromStringDef(IEnumerable<string> logicFunctionStringDef)
 		{
 			List<LogicFunctionRow> logicFunctionRows =
@@ -66,6 +94,46 @@ namespace BLIFtoEDIF_Converter.InitCalculator
 
 			LogicFunctionRow logicFunctionRow = new LogicFunctionRow(rowData);
 			return logicFunctionRow;
+		}
+
+		public static bool TryGetBlifModel(string srcLine, out Model model)
+		{
+			model = null;
+			const string modelKeyword = ".model ";
+			srcLine = srcLine.Trim();
+			if (!srcLine.Contains(modelKeyword))
+				return false;
+			srcLine = srcLine.Replace(modelKeyword, string.Empty);
+			model = new Model(srcLine);
+			return true;
+		}
+
+		public static bool TryGetInputs(string srcLine, out Inputs inputs)
+		{
+			inputs = null;
+			const string modelKeyword = ".inputs ";
+			srcLine = srcLine.Trim();
+			if (!srcLine.Contains(modelKeyword))
+				return false;
+			srcLine = srcLine.Replace(modelKeyword, string.Empty);
+			string[] inputStrings = srcLine.Split(new []{" "}, StringSplitOptions.RemoveEmptyEntries);
+			var inputCollection = inputStrings.Select(s => new Input(s));
+			inputs = new Inputs(inputCollection);
+			return true;
+		}
+
+		public static bool TryGetOutputs(string srcLine, out Outputs outputs)
+		{
+			outputs = null;
+			const string modelKeyword = ".outputs ";
+			srcLine = srcLine.Trim();
+			if (!srcLine.Contains(modelKeyword))
+				return false;
+			srcLine = srcLine.Replace(modelKeyword, string.Empty);
+			string[] inputStrings = srcLine.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+			var outputCollection = inputStrings.Select(s => new Output(s));
+			outputs = new Outputs(outputCollection);
+			return true;
 		}
 	}
 }

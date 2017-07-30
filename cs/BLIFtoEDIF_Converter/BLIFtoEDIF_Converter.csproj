@@ -45,7 +45,7 @@
   <ItemGroup>
     <Compile Include="InitCalculator\InitCalculator.cs" />
     <Compile Include="Logic\Model\Blif\Function\Function.cs" />
-    <Compile Include="InitCalculator\FunctionParser.cs" />
+    <Compile Include="Parser\Blif\BlifParser.cs" />
     <Compile Include="InitCalculator\Helpers.cs" />
     <Compile Include="InitCalculator\InitFuncValue.cs" />
     <Compile Include="Logic\Model\Blif\Function\LogicFunction.cs" />

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using BLIFtoEDIF_Converter.InitCalculator;
 using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
+using BLIFtoEDIF_Converter.Parser.Blif;
 
 namespace BLIFtoEDIF_Converter
 {
@@ -53,7 +54,7 @@ namespace BLIFtoEDIF_Converter
 			{
 				string[] lines = File.ReadAllLines(inputFilePath, encoding);
 
-				List<Function> functions = FunctionParser.GetFunctions(lines);
+				List<Function> functions = BlifParser.GetFunctions(lines);
 
 				List<InitFuncValue> initValues = functions.Select(f => f.CalculateInit()).ToList();
 				List<string> stringResults = initValues.Select(iv => iv.ToString()).ToList();

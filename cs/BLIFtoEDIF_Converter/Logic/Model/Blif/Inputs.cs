@@ -5,7 +5,7 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Blif
 {
 	public class Inputs
 	{
-		public Inputs(IReadOnlyList<Input> inputsList)
+		public Inputs(IEnumerable<Input> inputsList)
 		{
 			if(null == inputsList)
 				inputsList = new List<Input>();

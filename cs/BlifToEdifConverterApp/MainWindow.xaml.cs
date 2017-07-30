@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using BLIFtoEDIF_Converter.InitCalculator;
 using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
+using BLIFtoEDIF_Converter.Parser.Blif;
 using Microsoft.Win32;
 
 namespace BlifToEdifConverterApp
@@ -57,7 +58,7 @@ namespace BlifToEdifConverterApp
 			{
 				string blifValues = BlifTextBox.Text;
 				List<string> result = Regex.Split(blifValues, "\r\n|\r|\n").Where(str => !string.IsNullOrEmpty(str)).ToList();
-				List<Function> functions = FunctionParser.GetFunctions(result);
+				List<Function> functions = BlifParser.GetFunctions(result);
 
 				List<InitFuncValue> initValues = functions.Select(f => f.CalculateInit()).ToList();
 				List<string> stringResults = initValues.Select(iv => iv.ToString()).ToList();
