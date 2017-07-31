@@ -365,6 +365,536 @@ namespace Tests
 			Assert.AreEqual("AAAEBAA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
 
 
+			instanceCounter++; // == 2
+			Assert.AreEqual("LUT_80", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("LUT5", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
+			Assert.AreEqual("AAAEBEA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+
+
+			instanceCounter++; // == 3
+			Assert.AreEqual("LUT_81", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("LUT3", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
+			Assert.AreEqual("E8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+
+
+			instanceCounter++; // == 4
+			Assert.AreEqual("LUT_z0", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("LUT5", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
+			Assert.AreEqual("AABAAEA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+
+			instanceCounter++; // == 5
+			Assert.AreEqual("LUT_z1", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("LUT5", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
+			Assert.AreEqual("AAAEBAA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+
+
+			instanceCounter++; // == 6
+			Assert.AreEqual("LUT_50", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("LUT3", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
+			Assert.AreEqual("E8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+
+
+
+			instanceCounter++; // == 7
+			Assert.AreEqual("LUT_51", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("LUT5", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
+			Assert.AreEqual("AABEBAA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+
+
+			instanceCounter++; // == 8
+			Assert.AreEqual("LUT_70", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("LUT5", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
+			Assert.AreEqual("AAAEBEA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+
+
+			instanceCounter++; // == 9
+			Assert.AreEqual("LUT_71", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("LUT3", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
+			Assert.AreEqual("E8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+
+
+			instanceCounter++; // == 10
+			Assert.AreEqual("LUT_C00", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("LUT3", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
+			Assert.AreEqual("E8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+
+
+			instanceCounter++; // == 11
+			Assert.AreEqual("LUT_C00", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("LUT3", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
+			Assert.AreEqual("E8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+
+
+			instanceCounter++; // == 12
+			Assert.AreEqual("LUT_C11", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("LUT5", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
+			Assert.AreEqual("AAAEBEA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+
+
+			instanceCounter++; // == 13
+			Assert.AreEqual("c0_IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.AreEqual("c0_IBUF_renamed_0", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+
+			instanceCounter++; // == 14
+			Assert.AreEqual("c1_IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.AreEqual("c1_IBUF_renamed_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+
+			instanceCounter++; // == 15
+			Assert.AreEqual("x10_IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.AreEqual("x10_IBUF_renamed_2", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+
+			instanceCounter++; // == 16
+			Assert.AreEqual("x11_IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.AreEqual("x11_IBUF_renamed_3", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+
+			instanceCounter++; // == 17
+			Assert.AreEqual("x20_IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.AreEqual("x20_IBUF_renamed_4", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+
+			instanceCounter++; // == 18
+			Assert.AreEqual("x21_IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.AreEqual("x21_IBUF_renamed_5", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+
+			instanceCounter++; // == 19
+			Assert.AreEqual("C00_OBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.AreEqual("C00_OBUF_renamed_6", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("PBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+
+			instanceCounter++; // == 20
+			Assert.AreEqual("C11_OBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.AreEqual("C11_OBUF_renamed_7", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("PBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+
+			instanceCounter++; // == 21
+			Assert.AreEqual("z0_OBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.AreEqual("z0_OBUF_renamed_8", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("PBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+
+			instanceCounter++; // == 22
+			Assert.AreEqual("z1_OBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
+			Assert.AreEqual("z1_OBUF_renamed_9", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
+			Assert.AreEqual("PBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
+			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+
+			Assert.AreEqual(28, edif.Library.Cell.View.Contents.Nets.Count);
+
+
+			int netCounter = 0; // == 0
+			Assert.AreEqual("c0_IBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 4;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I3","LUT_40"),
+					new Tuple<string, string>("I3","LUT_41"),
+					new Tuple<string, string>("I3","LUT_80"),
+					new Tuple<string, string>("O","c0_IBUF_renamed_0")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+
+			netCounter++; // == 1
+			Assert.AreEqual("c1_IBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 5;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I4","LUT_40"),
+					new Tuple<string, string>("I4","LUT_41"),
+					new Tuple<string, string>("I4","LUT_80"),
+					new Tuple<string, string>("I2","LUT_81"),
+					new Tuple<string, string>("O","c1_IBUF_renamed_1")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+
+			netCounter++; // == 2
+			Assert.AreEqual("x10_IBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 6;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I4","LUT_z0"),
+					new Tuple<string, string>("I4","LUT_z1"),
+					new Tuple<string, string>("I1","LUT_50"),
+					new Tuple<string, string>("I1","LUT_51"),
+					new Tuple<string, string>("I1","LUT_70"),
+					new Tuple<string, string>("O","x10_IBUF_renamed_2")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+			netCounter++; // == 3
+			Assert.AreEqual("x11_IBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 6;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I3","LUT_z0"),
+					new Tuple<string, string>("I3","LUT_z1"),
+					new Tuple<string, string>("I2","LUT_51"),
+					new Tuple<string, string>("I2","LUT_70"),
+					new Tuple<string, string>("I1","LUT_71"),
+					new Tuple<string, string>("O","x11_IBUF_renamed_3")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+			netCounter++; // == 4
+			Assert.AreEqual("x20_IBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 6;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I1","LUT_40"),
+					new Tuple<string, string>("I1","LUT_41"),
+					new Tuple<string, string>("I2","LUT_50"),
+					new Tuple<string, string>("I3","LUT_51"),
+					new Tuple<string, string>("I3","LUT_70"),
+					new Tuple<string, string>("O","x20_IBUF_renamed_4")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+
+			netCounter++; // == 5
+			Assert.AreEqual("x21_IBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 6;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I2","LUT_40"),
+					new Tuple<string, string>("I2","LUT_41"),
+					new Tuple<string, string>("I4","LUT_51"),
+					new Tuple<string, string>("I4","LUT_70"),
+					new Tuple<string, string>("I2","LUT_71"),
+					new Tuple<string, string>("O","x21_IBUF_renamed_5")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+
+			netCounter++; // == 6
+			Assert.AreEqual("x40", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 4;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+
+					new Tuple<string, string>("I0","LUT_40"),
+					new Tuple<string, string>("I2","LUT_z0"),
+					new Tuple<string, string>("I2","LUT_z1"),
+					new Tuple<string, string>("O","LUT_40")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+
+			netCounter++; // == 7
+			Assert.AreEqual("x41", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 4;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+
+					new Tuple<string, string>("I0","LUT_41"),
+					new Tuple<string, string>("I1","LUT_z0"),
+					new Tuple<string, string>("I1","LUT_z1"),
+					new Tuple<string, string>("O","LUT_41")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+
+			netCounter++; // == 8
+			Assert.AreEqual("x80", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 4;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+
+					new Tuple<string, string>("I0","LUT_80"),
+					new Tuple<string, string>("I1","LUT_C00"),
+					new Tuple<string, string>("I2","LUT_C11"),
+					new Tuple<string, string>("O","LUT_80")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+
+			netCounter++; // == 8
+			Assert.AreEqual("x81", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 3;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+
+					new Tuple<string, string>("I0","LUT_81"),
+					new Tuple<string, string>("I1","LUT_C11"),
+					new Tuple<string, string>("O","LUT_81")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
 			//string edifSrc = edif.ToEdifText();
 			//Assert.IsNotNull(edifSrc);
 			//string formattedEdifSrc = SrcCodeFormatter.FormatEdifCode(edifSrc);
