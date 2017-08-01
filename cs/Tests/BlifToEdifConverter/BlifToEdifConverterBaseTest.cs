@@ -877,7 +877,7 @@ namespace Tests
 			}
 
 
-			netCounter++; // == 8
+			netCounter++; // == 9
 			Assert.AreEqual("x81", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
 			{
 				const int netPortRefCount = 3;
@@ -895,6 +895,149 @@ namespace Tests
 				}
 			}
 
+
+			netCounter++; // == 10
+			Assert.AreEqual("z0_OBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 3;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+
+					new Tuple<string, string>("I0","LUT_z0"),
+					new Tuple<string, string>("O","LUT_z0"),
+					new Tuple<string, string>("I","z0_OBUF_renamed_8")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+
+			netCounter++; // == 11
+			Assert.AreEqual("z1_OBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 3;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+
+					new Tuple<string, string>("I0","LUT_z1"),
+					new Tuple<string, string>("O","LUT_z1"),
+					new Tuple<string, string>("I","z1_OBUF_renamed_9")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+
+			netCounter++; // == 12
+			Assert.AreEqual("x50", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 3;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I1","LUT_80"),
+					new Tuple<string, string>("I0","LUT_50"),
+					new Tuple<string, string>("O","LUT_50")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+			netCounter++; // == 13
+			Assert.AreEqual("x51", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 4;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I2","LUT_80"),
+					new Tuple<string, string>("I1","LUT_81"),
+					new Tuple<string, string>("I0","LUT_51"),
+					new Tuple<string, string>("O","LUT_51")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+			netCounter++; // == 14
+			Assert.AreEqual("x70", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 4;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I0","LUT_70"),
+					new Tuple<string, string>("I2","LUT_C00"),
+					new Tuple<string, string>("I4","LUT_C11"),
+					new Tuple<string, string>("O","LUT_70")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+			netCounter++; // == 15
+			Assert.AreEqual("x71", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 3;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I0","LUT_71"),
+					new Tuple<string, string>("I3","LUT_C11"),
+					new Tuple<string, string>("O","LUT_71")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+
+			netCounter++; // == 16
+			Assert.AreEqual("C00_OBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 3;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I0","LUT_C00"),
+					new Tuple<string, string>("O","LUT_C00"),
+					new Tuple<string, string>("I","C00_OBUF_renamed_6")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
+
+			netCounter++; // == 17
+			Assert.AreEqual("C11_OBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			{
+				const int netPortRefCount = 3;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I0","LUT_C11"),
+					new Tuple<string, string>("O","LUT_C11"),
+					new Tuple<string, string>("I","C11_OBUF_renamed_7")
+				};
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
+					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+				}
+			}
 			//string edifSrc = edif.ToEdifText();
 			//Assert.IsNotNull(edifSrc);
 			//string formattedEdifSrc = SrcCodeFormatter.FormatEdifCode(edifSrc);
