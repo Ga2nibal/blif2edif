@@ -1,0 +1,64 @@
+﻿<Window x:Class="BlifToEdifConverterApp.Interaction.EdifConstantsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BlifToEdifConverterApp.Interaction"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="EdifConstantsWindow" Height="340" Width="300">
+        <Grid Margin="5,10">
+                <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                         <RowDefinition Height="*"/>
+                           <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Margin="3,3,3,3"
+                   Text="EDIF additional values"
+                   TextAlignment="Center" Grid.Row="0" Grid.ColumnSpan="3"/>
+
+        <TextBlock Margin="5" Text="ModelName"
+                 Grid.Row="2" Grid.Column="0"/>
+                  <TextBox Margin="5" PreviewTextInput="ModelNameBox_OnPreviewTextInput"
+                 AcceptsReturn="True" Name="ModelNameBox" Grid.Row="2" Grid.Column="1"/>
+                <TextBlock Margin="5" Text="ModelEdifLevel"
+                           Grid.Row="3" Grid.Column="0"/>
+                  <TextBox   Margin="5" PreviewTextInput="EdifLevelBox_OnPreviewTextInput"
+                         AcceptsReturn="True" Name="EdifLevelBox" Grid.Row="3" Grid.Column="1"/>
+                <TextBlock Margin="5" Text="Timestamp"
+                           Grid.Row="4" Grid.Column="0"/>
+                <xctk:DateTimePicker  HorizontalAlignment="Left" Name="TimestampDateTimePicker" VerticalAlignment="Top" Margin="5"
+                                Grid.Row="4" Grid.Column="1" HorizontalContentAlignment="Stretch" MinWidth="100"/>
+                <TextBlock Margin="5" Text="PropertyOwner"
+                        Grid.Row="5" Grid.Column="0"/>
+                <TextBox Margin="5"
+                         AcceptsReturn="True" Name="PropertyOwnerBox" Grid.Row="5" Grid.Column="1"/>
+                <TextBlock Margin="5" Text="TechnologyName"
+                           Grid.Row="6" Grid.Column="0"/>
+                <TextBox Margin="5"
+                         AcceptsReturn="True" Name="TechnologyNameBox" Grid.Row="6" Grid.Column="1"/>
+                <TextBlock Margin="5" Text="ViewName"
+                           Grid.Row="7" Grid.Column="0"/>
+                <TextBox Margin="5"
+                         AcceptsReturn="True" Name="ViewNameBox" Grid.Row="7" Grid.Column="1"/>
+                  <TextBlock Margin="5" Text="ExternalName"
+                            Grid.Row="8" Grid.Column="0"/>
+                 <TextBox  Margin="5"
+                          AcceptsReturn="True" Name="ExternalNameBox" Grid.Row="8" Grid.Column="1"/>
+                  <Button Margin="5" Content="OK" Name="OkButton" Grid.Row="9" Grid.Column="0" Click="OkButton_OnClick"/>
+                  <Button Margin="5" Content="Cancel" Name="CancelButton" Grid.Row="9" Grid.Column="1" Click="CancelButton_OnClick"/>
+         </Grid>
+</Window>
