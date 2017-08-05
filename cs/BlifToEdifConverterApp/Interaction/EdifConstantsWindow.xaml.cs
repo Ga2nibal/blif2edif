@@ -80,7 +80,7 @@ namespace BlifToEdifConverterApp.Interaction
 		private void ModelNameBox_OnPreviewTextInput(object sender, TextCompositionEventArgs e)
 		{
 			e.Handled = e.Text == null || 
-				!e.Text.Contains("-");
+				e.Text.Contains("-");
 		}
 	}
 }

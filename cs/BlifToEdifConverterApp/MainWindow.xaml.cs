@@ -72,6 +72,7 @@ namespace BlifToEdifConverterApp
 				List<InitFuncValue> initValues = functions.Select(f => f.CalculateInit()).ToList();
 				List<string> stringResults = initValues.Select(iv => iv.ToString()).ToList();
 				EdifTextBox.Text = string.Join(Environment.NewLine, stringResults);
+				_lastEdifConstants = null;
 			}
 			catch (Exception ex)
 			{
@@ -113,10 +114,10 @@ namespace BlifToEdifConverterApp
 		private void SaveEdif_OnClick(object sender, RoutedEventArgs e)
 		{
 			if (!string.IsNullOrEmpty(_blifOpenFileDialog.FileName))
-			{
 				_edifSaveFileDialog.FileName = System.IO.Path.ChangeExtension(
 					_blifOpenFileDialog.FileName, String.Empty); //TODO: ".init" and edif too
-			}
+			if (_lastEdifConstants != null)
+				_edifSaveFileDialog.FileName = _lastEdifConstants.ModelName;
 			bool? showDialogResult = _edifSaveFileDialog.ShowDialog();
 			if (showDialogResult.HasValue && showDialogResult.Value)
 			{
@@ -125,6 +126,7 @@ namespace BlifToEdifConverterApp
 			}
 		}
 
+		private BlifToEdifModelConverter.EdifConstants _lastEdifConstants;
 		private void ConvertToEdif_OnClick(object sender, RoutedEventArgs e)
 		{
 			try
@@ -148,6 +150,7 @@ namespace BlifToEdifConverterApp
 				string formattedEdifSrc = SrcCodeFormatter.FormatEdifCode(edifSrc);
 				
 				EdifTextBox.Text = "# RenameLog: " + renameLog + Environment.NewLine + formattedEdifSrc;
+				_lastEdifConstants = edifConstants;
 			}
 			catch (Exception ex)
 			{

@@ -2712,7 +2712,7 @@ namespace Tests
 
 			ITextViewElementsFactory factory = GetTextViewElementsFactory();
 			string renameLog;
-			BlifToEdifModelConverter.EdifConstants edifConstants = new BlifToEdifModelConverter.EdifConstants(blif.Model.Name);
+			BlifToEdifModelConverter.EdifConstants edifConstants = new BlifToEdifModelConverter.EdifConstants("adder_as_main");
 			IEdif edif = blif.ToEdif(factory, edifConstants, out renameLog);
 			string edifSrc = edif.ToEdifText();
 			Assert.IsNotNull(edifSrc);
