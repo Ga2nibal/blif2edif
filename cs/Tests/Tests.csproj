@@ -70,6 +70,12 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <EmbeddedResource Include="DataFiles\AdderAs\adder-as.blif" />
+    <EmbeddedResource Include="DataFiles\AdderAs\adder_as.edif" />
+    <EmbeddedResource Include="DataFiles\AdderAs2\adder-as.blif" />
+    <EmbeddedResource Include="DataFiles\AdderAs2\adder_as_main.edif" />
+    <EmbeddedResource Include="DataFiles\cm82\cm82a.blif" />
+    <EmbeddedResource Include="DataFiles\cm82\main_true_Table_schema_ver01.edif" />
     <None Include="Files\adder-as.blif" />
     <None Include="Files\cm82a.blif" />
     <None Include="Files\Diploma-Tasks-rel02-1-data.blif" />

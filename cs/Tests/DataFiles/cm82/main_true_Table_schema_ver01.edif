@@ -1,0 +1,324 @@
+(edif main_true_Table_schema_ver01
+  (edifVersion 2 0 0)
+  (edifLevel 0)
+  (keywordMap (keywordLevel 0))
+  (status
+    (written
+      (timestamp 2017 2 26 22 35 32)
+      (comment "This EDIF netlist is to be used within supported synthesis tools")
+      (comment "for determining resource/timing estimates of the design component")
+      (comment "represented by this netlist.")
+      (comment "Command line: main_true_Table_schema_ver01 ")))
+  (external UNISIMS
+    (edifLevel 0)
+    (technology (numberDefinition))
+    (cell LUT2
+      (cellType GENERIC)
+        (view view_1
+          (viewType NETLIST)
+          (interface
+            (port I0
+              (direction INPUT)
+            )
+            (port I1
+              (direction INPUT)
+            )
+            (port O
+              (direction OUTPUT)
+            )
+          )
+      )
+    )
+    (cell LUT3
+      (cellType GENERIC)
+        (view view_1
+          (viewType NETLIST)
+          (interface
+            (port I0
+              (direction INPUT)
+            )
+            (port I1
+              (direction INPUT)
+            )
+            (port I2
+              (direction INPUT)
+            )
+            (port O
+              (direction OUTPUT)
+            )
+          )
+      )
+    )
+    (cell IBUF
+      (cellType GENERIC)
+        (view view_1
+          (viewType NETLIST)
+          (interface
+            (port I
+              (direction INPUT)
+            )
+            (port O
+              (direction OUTPUT)
+            )
+          )
+      )
+    )
+    (cell OBUF
+      (cellType GENERIC)
+        (view view_1
+          (viewType NETLIST)
+          (interface
+            (port I
+              (direction INPUT)
+            )
+            (port O
+              (direction OUTPUT)
+            )
+          )
+      )
+    )
+  )
+
+  (library main_true_Table_schema_ver01_lib
+    (edifLevel 0)
+    (technology (numberDefinition))
+    (cell main_true_Table_schema_ver01
+      (cellType GENERIC)
+        (view view_1
+          (viewType NETLIST)
+          (interface
+            (port a
+              (direction INPUT)
+            )
+            (port b
+              (direction INPUT)
+            )
+            (port c
+              (direction INPUT)
+            )
+            (port d
+              (direction INPUT)
+            )
+            (port e
+              (direction INPUT)
+            )
+            (port f
+              (direction OUTPUT)
+            )
+            (port g
+              (direction OUTPUT)
+            )
+            (port h
+              (direction OUTPUT)
+            )
+            (designator "xc6slx4-3-tqg144")
+            (property TYPE (string "main_true_Table_schema_ver01") (owner "Xilinx"))
+            (property SHREG_MIN_SIZE (string "2") (owner "Xilinx"))
+            (property SHREG_EXTRACT_NGC (string "YES") (owner "Xilinx"))
+            (property NLW_UNIQUE_ID (integer 0) (owner "Xilinx"))
+            (property NLW_MACRO_TAG (integer 0) (owner "Xilinx"))
+            (property NLW_MACRO_ALIAS (string "main_true_Table_schema_ver01_main_true_Table_schema_ver01") (owner "Xilinx"))
+          )
+          (contents
+            (instance LUT_f
+              (viewRef view_1 (cellRef LUT2 (libraryRef UNISIMS)))
+              (property XSTLIB (boolean (true)) (owner "Xilinx"))
+              (property PK_HLUTNM (string "___XLNM___2___LUT_g") (owner "Xilinx"))
+              (property INIT (string "6") (owner "Xilinx"))
+            )
+            (instance LUT_o
+              (viewRef view_1 (cellRef LUT3 (libraryRef UNISIMS)))
+              (property XSTLIB (boolean (true)) (owner "Xilinx"))
+              (property PK_HLUTNM (string "___XLNM___1___LUT_o") (owner "Xilinx"))
+              (property INIT (string "17") (owner "Xilinx"))
+            )
+            (instance LUT_s
+              (viewRef view_1 (cellRef LUT2 (libraryRef UNISIMS)))
+              (property XSTLIB (boolean (true)) (owner "Xilinx"))
+              (property PK_HLUTNM (string "___XLNM___1___LUT_o") (owner "Xilinx"))
+              (property INIT (string "6") (owner "Xilinx"))
+            )
+            (instance LUT_h
+              (viewRef view_1 (cellRef LUT3 (libraryRef UNISIMS)))
+              (property XSTLIB (boolean (true)) (owner "Xilinx"))
+              (property PK_HLUTNM (string "___XLNM___0___LUT_h") (owner "Xilinx"))
+              (property INIT (string "8E") (owner "Xilinx"))
+            )
+            (instance LUT_r
+              (viewRef view_1 (cellRef LUT2 (libraryRef UNISIMS)))
+              (property XSTLIB (boolean (true)) (owner "Xilinx"))
+              (property PK_HLUTNM (string "___XLNM___0___LUT_h") (owner "Xilinx"))
+              (property INIT (string "6") (owner "Xilinx"))
+            )
+            (instance LUT_g
+              (viewRef view_1 (cellRef LUT2 (libraryRef UNISIMS)))
+              (property XSTLIB (boolean (true)) (owner "Xilinx"))
+              (property PK_HLUTNM (string "___XLNM___2___LUT_g") (owner "Xilinx"))
+              (property INIT (string "9") (owner "Xilinx"))
+            )
+            (instance (rename a_IBUF_renamed_0 "a_IBUF")
+              (viewRef view_1 (cellRef IBUF (libraryRef UNISIMS)))
+              (property XSTLIB (boolean (true)) (owner "Xilinx"))
+            )
+            (instance (rename b_IBUF_renamed_1 "b_IBUF")
+              (viewRef view_1 (cellRef IBUF (libraryRef UNISIMS)))
+              (property XSTLIB (boolean (true)) (owner "Xilinx"))
+            )
+            (instance (rename c_IBUF_renamed_2 "c_IBUF")
+              (viewRef view_1 (cellRef IBUF (libraryRef UNISIMS)))
+              (property XSTLIB (boolean (true)) (owner "Xilinx"))
+            )
+            (instance (rename d_IBUF_renamed_3 "d_IBUF")
+              (viewRef view_1 (cellRef IBUF (libraryRef UNISIMS)))
+              (property XSTLIB (boolean (true)) (owner "Xilinx"))
+            )
+            (instance (rename e_IBUF_renamed_4 "e_IBUF")
+              (viewRef view_1 (cellRef IBUF (libraryRef UNISIMS)))
+              (property XSTLIB (boolean (true)) (owner "Xilinx"))
+            )
+            (instance (rename f_OBUF_renamed_5 "f_OBUF")
+              (viewRef view_1 (cellRef OBUF (libraryRef UNISIMS)))
+              (property XSTLIB (boolean (true)) (owner "Xilinx"))
+            )
+            (instance (rename g_OBUF_renamed_6 "g_OBUF")
+              (viewRef view_1 (cellRef OBUF (libraryRef UNISIMS)))
+              (property XSTLIB (boolean (true)) (owner "Xilinx"))
+            )
+            (instance (rename h_OBUF_renamed_7 "h_OBUF")
+              (viewRef view_1 (cellRef OBUF (libraryRef UNISIMS)))
+              (property XSTLIB (boolean (true)) (owner "Xilinx"))
+            )
+            (net a_IBUF
+              (joined
+                (portRef I1 (instanceRef LUT_f))
+                (portRef I2 (instanceRef LUT_o))
+                (portRef O (instanceRef a_IBUF_renamed_0))
+              )
+            )
+            (net b_IBUF
+              (joined
+                (portRef I1 (instanceRef LUT_o))
+                (portRef I1 (instanceRef LUT_s))
+                (portRef O (instanceRef b_IBUF_renamed_1))
+              )
+            )
+            (net c_IBUF
+              (joined
+                (portRef I0 (instanceRef LUT_o))
+                (portRef I0 (instanceRef LUT_s))
+                (portRef O (instanceRef c_IBUF_renamed_2))
+              )
+            )
+            (net d_IBUF
+              (joined
+                (portRef I1 (instanceRef LUT_h))
+                (portRef I1 (instanceRef LUT_r))
+                (portRef O (instanceRef d_IBUF_renamed_3))
+              )
+            )
+            (net e_IBUF
+              (joined
+                (portRef I0 (instanceRef LUT_h))
+                (portRef I0 (instanceRef LUT_r))
+                (portRef O (instanceRef e_IBUF_renamed_4))
+              )
+            )
+            (net f_OBUF
+              (joined
+                (portRef O (instanceRef LUT_f))
+                (portRef I (instanceRef f_OBUF_renamed_5))
+              )
+            )
+            (net o
+              (joined
+                (portRef O (instanceRef LUT_o))
+                (portRef I2 (instanceRef LUT_h))
+                (portRef I1 (instanceRef LUT_g))
+              )
+            )
+            (net s
+              (joined
+                (portRef I0 (instanceRef LUT_f))
+                (portRef O (instanceRef LUT_s))
+              )
+            )
+            (net h_OBUF
+              (joined
+                (portRef O (instanceRef LUT_h))
+                (portRef I (instanceRef h_OBUF_renamed_7))
+              )
+            )
+            (net r
+              (joined
+                (portRef O (instanceRef LUT_r))
+                (portRef I0 (instanceRef LUT_g))
+              )
+            )
+            (net g_OBUF
+              (joined
+                (portRef O (instanceRef LUT_g))
+                (portRef I (instanceRef g_OBUF_renamed_6))
+              )
+            )
+            (net a
+              (joined
+                (portRef a)
+                (portRef I (instanceRef a_IBUF_renamed_0))
+              )
+            )
+            (net b
+              (joined
+                (portRef b)
+                (portRef I (instanceRef b_IBUF_renamed_1))
+              )
+            )
+            (net c
+              (joined
+                (portRef c)
+                (portRef I (instanceRef c_IBUF_renamed_2))
+              )
+            )
+            (net d
+              (joined
+                (portRef d)
+                (portRef I (instanceRef d_IBUF_renamed_3))
+              )
+            )
+            (net e
+              (joined
+                (portRef e)
+                (portRef I (instanceRef e_IBUF_renamed_4))
+              )
+            )
+            (net f
+              (joined
+                (portRef f)
+                (portRef O (instanceRef f_OBUF_renamed_5))
+              )
+            )
+            (net g
+              (joined
+                (portRef g)
+                (portRef O (instanceRef g_OBUF_renamed_6))
+              )
+            )
+            (net h
+              (joined
+                (portRef h)
+                (portRef O (instanceRef h_OBUF_renamed_7))
+              )
+            )
+          )
+      )
+    )
+  )
+
+  (design main_true_Table_schema_ver01
+    (cellRef main_true_Table_schema_ver01
+      (libraryRef main_true_Table_schema_ver01_lib)
+    )
+    (property PART (string "xc6slx4-3-tqg144") (owner "Xilinx"))
+  )
+)
+
+
