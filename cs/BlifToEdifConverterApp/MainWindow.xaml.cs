@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BlifToEdifConverterApp.Interaction;
 using BLIFtoEDIF_Converter.InitCalculator;
 using BLIFtoEDIF_Converter.Logic;
 using BLIFtoEDIF_Converter.Logic.Model.Blif;
@@ -132,8 +133,19 @@ namespace BlifToEdifConverterApp
 				List<string> result = Regex.Split(blifValues, "\r\n|\r|\n").Where(str => !string.IsNullOrEmpty(str)).ToList();
 				Blif blif = BlifParser.GetBlif(result);
 
+				string edifModelName = blif.Model.Name;
+				if (edifModelName.Contains(".blif") || edifModelName.Contains(".edif") || edifModelName.Contains("-"))
+					edifModelName = edifModelName.Replace(".blif", string.Empty).Replace(".edif", string.Empty)
+						.Replace("-", "_");
+				BlifToEdifModelConverter.EdifConstants edifConstants = new BlifToEdifModelConverter.EdifConstants(edifModelName);
+				EdifConstantsWindow edifConstantsWindow = new EdifConstantsWindow(edifConstants);
+				edifConstantsWindow.Owner = this;
+				bool? showResult = edifConstantsWindow.ShowDialog();
+				if(!showResult.HasValue || !showResult.Value)
+					return;
+
 				string renameLog;
-				IEdif edif = blif.ToEdif(_edifFactory, out renameLog);
+				IEdif edif = blif.ToEdif(_edifFactory, edifConstants, out renameLog);
 				
 				string edifSrc = edif.ToEdifText();
 				string formattedEdifSrc = SrcCodeFormatter.FormatEdifCode(edifSrc);

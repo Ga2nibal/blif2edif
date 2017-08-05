@@ -65,8 +65,9 @@ namespace Tests
 			Blif blif = BlifParser.GetBlif(srcLines);
 
 			string renameLog;
+			BlifToEdifModelConverter.EdifConstants edifConstants = new BlifToEdifModelConverter.EdifConstants(blif.Model.Name);
 			ITextViewElementsFactory factory = GetTextViewElementsFactory();
-			IEdif edif = blif.ToEdif(factory, out renameLog);
+			IEdif edif = blif.ToEdif(factory, edifConstants, out renameLog);
 
 			Assert.IsNotNull(edif);
 
@@ -172,7 +173,8 @@ namespace Tests
 
 			ITextViewElementsFactory factory = GetTextViewElementsFactory();
 			string renameLog;
-			IEdif edif = blif.ToEdif(factory, out renameLog);
+			BlifToEdifModelConverter.EdifConstants edifConstants = new BlifToEdifModelConverter.EdifConstants(blif.Model.Name);
+			IEdif edif = blif.ToEdif(factory, edifConstants, out renameLog);
 
 			Assert.IsNotNull(edif);
 

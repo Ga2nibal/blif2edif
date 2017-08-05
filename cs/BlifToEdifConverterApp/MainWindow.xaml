@@ -53,9 +53,9 @@
 		<StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right"
 					VerticalAlignment="Top">
 			<RadioButton Height="Auto" Content="UTF8" Width="Auto" Name="RadioUTFEncoding"
-					Margin="3,0" IsChecked="True" Checked="RadioUTFEncoding_OnChecked"></RadioButton>
+					Margin="3,0" Checked="RadioUTFEncoding_OnChecked"></RadioButton>
 			<RadioButton Height="Auto" Content="Local Encoding" Width="Auto" Name="RadioLocalEncoding"
-					Margin="3,0" Checked="RadioLocalEncoding_OnChecked"></RadioButton>
+					Margin="3,0" IsChecked="True"  Checked="RadioLocalEncoding_OnChecked"></RadioButton>
 		</StackPanel>
 	</Grid>
 </Window>
