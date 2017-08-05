@@ -27,6 +27,9 @@ namespace BLIFtoEDIF_Converter.Logic
 			{
 				if(string.IsNullOrEmpty(modelName))
 					throw new ArgumentNullException(nameof(modelName), $"{nameof(modelName)} is not defined");
+				if (modelName.Contains(".blif") || modelName.Contains(".edif") || modelName.Contains("-"))
+					modelName = modelName.Replace(".blif", string.Empty).Replace(".edif", string.Empty)
+						.Replace("-", "_");
 				ModelName = modelName;
 			}
 			public string ModelName { get; set; }
@@ -55,7 +58,7 @@ namespace BLIFtoEDIF_Converter.Logic
 
 			public int KeywordMapLevel { get; set; } = 0;
 
-			public string StatusWrittenComment { get; set; } = "Do we need this in converter?";
+			public string StatusWrittenComment { get; set; } = "Do we need it in converter?";
 
 			public string ExternalName { get; set; } = "UNISIMS";
 
@@ -287,6 +290,9 @@ namespace BLIFtoEDIF_Converter.Logic
 				IViewRef viewRef = edifFactory.CreateViewRef(edifConstants.GenericViewName, cellRef);
 
 				List<IProperty> properties = new List<IProperty>();
+				IProperty xstlibProperty = EdifHelper.CreateEdifProperty(edifFactory, PropertyType.XSTLIB,
+					edifConstants.PropertyOwner, true);
+				properties.Add(xstlibProperty);
 				InitFuncValue initFunctionValue = function.CalculateInit();
 				IProperty initProperty = EdifHelper.CreateEdifProperty(edifFactory, PropertyType.INIT,
 					edifConstants.PropertyOwner, initFunctionValue.ToString());
@@ -367,12 +373,59 @@ namespace BLIFtoEDIF_Converter.Logic
 			List<INet> ibufNets = CreateIbufNets(blif, edifFactory, instances);
 			List<INet> obufNets = CreateObufNets(blif, edifFactory, instances);
 			List<INet> lutNets = CreateLutNets(blif, edifFactory, sanitizedNames);
+			List<INet> selfInOutNets = CreateSelfInOutNet(blif, edifFactory, instances, sanitizedNames);
 
 			netResult.AddRange(ibufNets);
 			netResult.AddRange(obufNets);
 			netResult.AddRange(lutNets);
+			netResult.AddRange(selfInOutNets);
 
 			return netResult;
+		}
+
+		private static List<INet> CreateSelfInOutNet(Blif blif, ITextViewElementsFactory edifFactory, List<IInstance> instances, HashSet<string> sanitizedNames)
+		{
+			List<INet> netsResult = new List<INet>();
+
+			foreach (Input input in blif.Inputs.InputList)
+			{
+				string ibufNetName = input.Name;
+				string instanceIbufName = GetInstanceIbufName(input);
+
+				List<IPortRef> portRefs = new List<IPortRef>();
+
+				IPortRef selfPort = edifFactory.CreatePortRef(ibufNetName, null);
+				portRefs.Add(selfPort);
+
+				IInstance instance = instances.First(ins => ins.Name.Equals(instanceIbufName, StringComparison.InvariantCulture));
+				IInstanceRef instanceRef = edifFactory.CreateInstanceRef(instance.RenamedSynonym);
+				IPortRef outPortRef = edifFactory.CreatePortRef("I", instanceRef);
+				portRefs.Add(outPortRef);
+
+				INet net = edifFactory.CreateNet(ibufNetName, portRefs);
+				netsResult.Add(net);
+			}
+
+			foreach(Output output in blif.Outputs.OutputList)
+			{
+				string obufNetName = output.Name;
+				string instanceObufName = GetInstanceObufName(output);
+
+				List<IPortRef> portRefs = new List<IPortRef>();
+
+				IPortRef selfPort = edifFactory.CreatePortRef(obufNetName, null);
+				portRefs.Add(selfPort);
+
+				IInstance instance = instances.First(ins => ins.Name.Equals(instanceObufName, StringComparison.InvariantCulture));
+				IInstanceRef instanceRef = edifFactory.CreateInstanceRef(instance.RenamedSynonym);
+				IPortRef outPortRef = edifFactory.CreatePortRef("O", instanceRef);
+				portRefs.Add(outPortRef);
+
+				INet net = edifFactory.CreateNet(obufNetName, portRefs);
+				netsResult.Add(net);
+			}
+
+			return netsResult;
 		}
 
 		private static List<INet> CreateIbufNets(Blif blif, ITextViewElementsFactory edifFactory,

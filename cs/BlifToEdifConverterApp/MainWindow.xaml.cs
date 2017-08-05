@@ -134,9 +134,6 @@ namespace BlifToEdifConverterApp
 				Blif blif = BlifParser.GetBlif(result);
 
 				string edifModelName = blif.Model.Name;
-				if (edifModelName.Contains(".blif") || edifModelName.Contains(".edif") || edifModelName.Contains("-"))
-					edifModelName = edifModelName.Replace(".blif", string.Empty).Replace(".edif", string.Empty)
-						.Replace("-", "_");
 				BlifToEdifModelConverter.EdifConstants edifConstants = new BlifToEdifModelConverter.EdifConstants(edifModelName);
 				EdifConstantsWindow edifConstantsWindow = new EdifConstantsWindow(edifConstants);
 				edifConstantsWindow.Owner = this;

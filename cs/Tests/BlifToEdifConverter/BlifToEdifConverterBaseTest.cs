@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using BLIFtoEDIF_Converter.Logic;
 using BLIFtoEDIF_Converter.Logic.Model.Blif;
 using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction;
 using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Cell;
+using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Instance;
 using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Port;
 using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Property;
 using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.View;
@@ -178,7 +180,7 @@ namespace Tests
 
 			Assert.IsNotNull(edif);
 
-			Assert.AreEqual("adder_as_main", edif.Name);
+			Assert.AreEqual("adder_as", edif.Name);
 
 			Assert.AreEqual(2, edif.Version.MajorVersion);
 			Assert.AreEqual(0, edif.Version.MidVersion);
@@ -191,11 +193,8 @@ namespace Tests
 
 			Assert.IsTrue(edif.Status.Written.Timestamp > DateTime.Now.AddMinutes(-1)); //TODO: is ok??
 			Assert.IsTrue(edif.Status.Written.Timestamp < DateTime.Now.AddMinutes(1)); //TODO: is ok??
-			Assert.AreEqual(4, edif.Status.Written.Comments.Count);//TODO: is ok??
-			Assert.AreEqual("This EDIF netlist is to be used within supported synthesis tools", edif.Status.Written.Comments[0].Text);
-			Assert.AreEqual("for determining resource/timing estimates of the design component", edif.Status.Written.Comments[1].Text);
-			Assert.AreEqual("represented by this netlist.", edif.Status.Written.Comments[2].Text);
-			Assert.AreEqual("Command line: -w adder_as_main.ngc ", edif.Status.Written.Comments[3].Text);
+			Assert.AreEqual(1, edif.Status.Written.Comments.Count);//TODO: is ok??
+			Assert.AreEqual("Do we need it in converter?", edif.Status.Written.Comments[0].Text);
 
 			Assert.AreEqual("UNISIMS", edif.External.Name);
 			Assert.AreEqual(0, edif.External.EdifLevel.Level);
@@ -267,10 +266,10 @@ namespace Tests
 
 
 
-			Assert.AreEqual("adder_as_main_lib", edif.Library.Name);
+			Assert.AreEqual("adder_as_lib", edif.Library.Name);
 			Assert.AreEqual(0, edif.Library.Level.Level);
 			Assert.AreEqual("numberDefinition", edif.Library.Technology.Name);
-			Assert.AreEqual("adder_as_main", edif.Library.Cell.Name);
+			Assert.AreEqual("adder_as", edif.Library.Cell.Name);
 			Assert.AreEqual(CellType.GENERIC, edif.Library.Cell.CellType);
 			Assert.AreEqual("view_1", edif.Library.Cell.View.Name);
 			Assert.AreEqual(ViewType.NETLIST, edif.Library.Cell.View.ViewType);
@@ -285,16 +284,20 @@ namespace Tests
 					new Tuple<string, PortDirection>("x11", PortDirection.INPUT),
 					new Tuple<string, PortDirection>("x20", PortDirection.INPUT),
 					new Tuple<string, PortDirection>("x21", PortDirection.INPUT),
-					new Tuple<string, PortDirection>("C00", PortDirection.OUTPUT),
-					new Tuple<string, PortDirection>("C11", PortDirection.OUTPUT),
+					new Tuple<string, PortDirection>("C0_R0", PortDirection.OUTPUT),
+					new Tuple<string, PortDirection>("C1_R1", PortDirection.OUTPUT),
 					new Tuple<string, PortDirection>("z0", PortDirection.OUTPUT),
 					new Tuple<string, PortDirection>("z1", PortDirection.OUTPUT)
 				};
 
 				for (int i = 0; i < portCount; i++)
 				{
-					Assert.AreEqual(portEtalons[i].Item1, edif.Library.Cell.View.Interface.Ports[i].Name);
-					Assert.AreEqual(portEtalons[i].Item2, edif.Library.Cell.View.Interface.Ports[i].Direction);
+					IPort port = edif.Library.Cell.View.Interface.Ports[i];
+					Tuple<string, PortDirection> etalonPort = portEtalons.FirstOrDefault(
+						et => et.Item1.Equals(port.Name, StringComparison.InvariantCulture));
+					Assert.IsNotNull(etalonPort, $"Can not find etalon port with name '{port.Name}'");
+					Assert.AreEqual(etalonPort.Item1, edif.Library.Cell.View.Interface.Ports[i].Name);
+					Assert.AreEqual(etalonPort.Item2, edif.Library.Cell.View.Interface.Ports[i].Direction);
 				}
 			}
 			Assert.AreEqual("xc6slx4-3-tqg144", edif.Library.Cell.View.Interface.Designator);
@@ -305,7 +308,7 @@ namespace Tests
 					new Tuple < PropertyType, PropertyValueType, object, string>[propertiesCount]
 				{
 					new Tuple<PropertyType, PropertyValueType, object, string>
-						(PropertyType.TYPE, PropertyValueType.String, "adder_as_main", "Xilinx"),
+						(PropertyType.TYPE, PropertyValueType.String, "adder_as", "Xilinx"),
 					new Tuple<PropertyType, PropertyValueType, object, string>
 						(PropertyType.KEEP_HIERARCHY, PropertyValueType.String, "TRUE", "Xilinx"),
 					new Tuple<PropertyType, PropertyValueType, object, string>
@@ -317,389 +320,455 @@ namespace Tests
 					new Tuple<PropertyType, PropertyValueType, object, string>
 						(PropertyType.NLW_MACRO_TAG, PropertyValueType.Integer, 0, "Xilinx"),
 					new Tuple<PropertyType, PropertyValueType, object, string>
-						(PropertyType.NLW_MACRO_ALIAS, PropertyValueType.String, "adder_as_main_adder_as_main", "Xilinx")
+						(PropertyType.NLW_MACRO_ALIAS, PropertyValueType.String, "adder_as_adder_as", "Xilinx")
 				};
 
 				for (int i = 0; i < propertiesCount; i++)
 				{
-					Assert.AreEqual(propertiesEtalons[i].Item1, edif.Library.Cell.View.Interface.Properties[i].PropertyType);
-					Assert.AreEqual(propertiesEtalons[i].Item2, edif.Library.Cell.View.Interface.Properties[i].Value.Type);
-					Assert.AreEqual(propertiesEtalons[i].Item3, edif.Library.Cell.View.Interface.Properties[i].Value.Value);
-					Assert.AreEqual(propertiesEtalons[i].Item4, edif.Library.Cell.View.Interface.Properties[i].Owner);
+					IProperty property = edif.Library.Cell.View.Interface.Properties[i];
+					Tuple<PropertyType, PropertyValueType, object, string> etalonProperty = propertiesEtalons.FirstOrDefault(
+						et => et.Item1 == property.PropertyType && et.Item2 == property.Value.Type
+						&& et.Item3.Equals(property.Value.Value) && et.Item4.Equals(property.Owner));
+					Assert.IsNotNull(etalonProperty, $"Can not find etalon propery for '{property}'");
+					Assert.AreEqual(etalonProperty.Item1, edif.Library.Cell.View.Interface.Properties[i].PropertyType);
+					Assert.AreEqual(etalonProperty.Item2, edif.Library.Cell.View.Interface.Properties[i].Value.Type);
+					Assert.AreEqual(etalonProperty.Item3, edif.Library.Cell.View.Interface.Properties[i].Value.Value);
+					Assert.AreEqual(etalonProperty.Item4, edif.Library.Cell.View.Interface.Properties[i].Owner);
 				}
 			}
 
 			Assert.AreEqual(22, edif.Library.Cell.View.Contents.Instances.Count);
+			
+			string instanceName = "LUT_40";
+			IInstance instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT5", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
 
-			int instanceCounter = 0;
-			Assert.AreEqual("LUT_40", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("LUT5", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
-
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
-			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
-			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
-			Assert.AreEqual("AABAAEA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
-
-
-			instanceCounter++; // == 1
-			Assert.AreEqual("LUT_41", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("LUT5", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
-
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
-			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
-			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
-			Assert.AreEqual("AAAEBAA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("AABAAEA8", instance.Properties[1].Value.Value);
 
 
-			instanceCounter++; // == 2
-			Assert.AreEqual("LUT_80", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("LUT5", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+			// == 1
+			instanceName = "LUT_41";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual("LUT_41", instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT5", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
 
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
-			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
-			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
-			Assert.AreEqual("AAAEBEA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
-
-
-			instanceCounter++; // == 3
-			Assert.AreEqual("LUT_81", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("LUT3", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
-
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
-			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
-			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
-			Assert.AreEqual("E8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("AAAEBAA8", instance.Properties[1].Value.Value);
 
 
-			instanceCounter++; // == 4
-			Assert.AreEqual("LUT_z0", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("LUT5", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+			// == 2
+			instanceName = "LUT_80";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual("LUT_80", instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT5", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
 
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
-			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
-			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
-			Assert.AreEqual("AABAAEA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
-
-			instanceCounter++; // == 5
-			Assert.AreEqual("LUT_z1", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("LUT5", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
-
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
-			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
-			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
-			Assert.AreEqual("AAAEBAA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("AAAEBEA8", instance.Properties[1].Value.Value);
 
 
-			instanceCounter++; // == 6
-			Assert.AreEqual("LUT_50", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("LUT3", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+			// == 3
+			instanceName = "LUT_81";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual("LUT_81", instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT3", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
 
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
-			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
-			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
-			Assert.AreEqual("E8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
-
-
-
-			instanceCounter++; // == 7
-			Assert.AreEqual("LUT_51", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("LUT5", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
-
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
-			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
-			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
-			Assert.AreEqual("AABEBAA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("E8", instance.Properties[1].Value.Value);
 
 
-			instanceCounter++; // == 8
-			Assert.AreEqual("LUT_70", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("LUT5", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+			// == 4
+			instanceName = "LUT_z0";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual("LUT_z0", instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT5", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
 
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
-			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
-			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
-			Assert.AreEqual("AAAEBEA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("AABAAEA8", instance.Properties[1].Value.Value);
 
+			// == 5
+			instanceName = "LUT_z1";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual("LUT_z1", instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT5", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
 
-			instanceCounter++; // == 9
-			Assert.AreEqual("LUT_71", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("LUT3", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
-
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
-			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
-			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
-			Assert.AreEqual("E8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
-
-
-			instanceCounter++; // == 10
-			Assert.AreEqual("LUT_C00", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("LUT3", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
-
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
-			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
-			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
-			Assert.AreEqual("E8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("AAAEBAA8", instance.Properties[1].Value.Value);
 
 
-			instanceCounter++; // == 11
-			Assert.AreEqual("LUT_C00", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("LUT3", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+			// == 6
+			instanceName = "LUT_50";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual("LUT_50", instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT3", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
 
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
-			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
-			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
-			Assert.AreEqual("E8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
-
-
-			instanceCounter++; // == 12
-			Assert.AreEqual("LUT_C11", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.IsNull(edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("LUT5", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(2, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
-
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Owner);
-			Assert.AreEqual(PropertyType.INIT, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].PropertyType);
-			Assert.AreEqual(PropertyValueType.String, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Type);
-			Assert.AreEqual("AAAEBEA8", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[1].Value.Value);
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("E8", instance.Properties[1].Value.Value);
 
 
-			instanceCounter++; // == 13
-			Assert.AreEqual("c0_IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.AreEqual("c0_IBUF_renamed_0", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+
+			// == 7
+			instanceName = "LUT_51";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual("LUT_51", instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT5", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("AABEBAA8", instance.Properties[1].Value.Value);
 
 
-			instanceCounter++; // == 14
-			Assert.AreEqual("c1_IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.AreEqual("c1_IBUF_renamed_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+			// == 8
+			instanceName = "LUT_70";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual("LUT_70", instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT5", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("AAAEBEA8", instance.Properties[1].Value.Value);
 
 
-			instanceCounter++; // == 15
-			Assert.AreEqual("x10_IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.AreEqual("x10_IBUF_renamed_2", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+			// == 9
+			instanceName = "LUT_71";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual("LUT_71", instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT3", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("E8", instance.Properties[1].Value.Value);
 
 
-			instanceCounter++; // == 16
-			Assert.AreEqual("x11_IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.AreEqual("x11_IBUF_renamed_3", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+			// == 10
+			instanceName = "LUT_C0_R0";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT3", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("E8", instance.Properties[1].Value.Value);
+			
+			
+			instanceName = "LUT_C1_R1";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT5", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("AAAEBEA8", instance.Properties[1].Value.Value);
+
+			
+			instanceName = "c0_IBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("c0_IBUF_renamed_0", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("IBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			
+			instanceName = "c1_IBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("c1_IBUF_renamed_1", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("IBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			
+			instanceName = "x10_IBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("x10_IBUF_renamed_4", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("IBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			
+			instanceName = "x11_IBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("x11_IBUF_renamed_5", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("IBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+			
+
+			instanceName = "x20_IBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("x20_IBUF_renamed_2", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("IBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			
+			instanceName = "x21_IBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("x21_IBUF_renamed_3", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("IBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			
+			instanceName = "C0_R0_OBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("C0_R0_OBUF_renamed_8", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("OBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			
+			instanceName = "C1_R1_OBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("C1_R1_OBUF_renamed_9", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("OBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
 
 
-			instanceCounter++; // == 17
-			Assert.AreEqual("x20_IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.AreEqual("x20_IBUF_renamed_4", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+			instanceName = "z0_OBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("z0_OBUF", instance.Name);
+			Assert.AreEqual("z0_OBUF_renamed_6", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("OBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
 
-
-			instanceCounter++; // == 18
-			Assert.AreEqual("x21_IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.AreEqual("x21_IBUF_renamed_5", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("IBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
-
-
-			instanceCounter++; // == 19
-			Assert.AreEqual("C00_OBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.AreEqual("C00_OBUF_renamed_6", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("PBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
-
-
-			instanceCounter++; // == 20
-			Assert.AreEqual("C11_OBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.AreEqual("C11_OBUF_renamed_7", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("PBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
-
-
-			instanceCounter++; // == 21
-			Assert.AreEqual("z0_OBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.AreEqual("z0_OBUF_renamed_8", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("PBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
-
-
-			instanceCounter++; // == 22
-			Assert.AreEqual("z1_OBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].Name);
-			Assert.AreEqual("z1_OBUF_renamed_9", edif.Library.Cell.View.Contents.Instances[instanceCounter].RenamedSynonym);
-			Assert.AreEqual("view_1", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.Name);
-			Assert.AreEqual("PBUF", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.Name);
-			Assert.AreEqual("UNISIMS", edif.Library.Cell.View.Contents.Instances[instanceCounter].ViewRef.CellRef.LibraryRef.Name);
-			Assert.AreEqual(1, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties.Count);
-			Assert.AreEqual("Xilinx", edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Owner);
-			Assert.AreEqual(PropertyType.XSTLIB, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].PropertyType);
-			Assert.AreEqual(PropertyValueType.Boolean, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Type);
-			Assert.AreEqual(true, edif.Library.Cell.View.Contents.Instances[instanceCounter].Properties[0].Value.Value);
+			
+			instanceName = "z1_OBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("z1_OBUF_renamed_7", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("OBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
 
 
 			Assert.AreEqual(28, edif.Library.Cell.View.Contents.Nets.Count);
 
 
-			int netCounter = 0; // == 0
-			Assert.AreEqual("c0_IBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			string netName = "c0_IBUF";
+			INet netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
 			{
 				const int netPortRefCount = 4;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
@@ -709,16 +778,23 @@ namespace Tests
 					new Tuple<string, string>("I3","LUT_80"),
 					new Tuple<string, string>("O","c0_IBUF_renamed_0")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-
-			netCounter++; // == 1
-			Assert.AreEqual("c1_IBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			
+			netName = "c1_IBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
 			{
 				const int netPortRefCount = 5;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
@@ -729,16 +805,23 @@ namespace Tests
 					new Tuple<string, string>("I2","LUT_81"),
 					new Tuple<string, string>("O","c1_IBUF_renamed_1")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
 
-			netCounter++; // == 2
-			Assert.AreEqual("x10_IBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x10_IBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
 			{
 				const int netPortRefCount = 6;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
@@ -748,17 +831,24 @@ namespace Tests
 					new Tuple<string, string>("I1","LUT_50"),
 					new Tuple<string, string>("I1","LUT_51"),
 					new Tuple<string, string>("I1","LUT_70"),
-					new Tuple<string, string>("O","x10_IBUF_renamed_2")
+					new Tuple<string, string>("O","x10_IBUF_renamed_4")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
-
-			netCounter++; // == 3
-			Assert.AreEqual("x11_IBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			
+			netName = "x11_IBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
 			{
 				const int netPortRefCount = 6;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
@@ -768,17 +858,24 @@ namespace Tests
 					new Tuple<string, string>("I2","LUT_51"),
 					new Tuple<string, string>("I2","LUT_70"),
 					new Tuple<string, string>("I1","LUT_71"),
-					new Tuple<string, string>("O","x11_IBUF_renamed_3")
+					new Tuple<string, string>("O","x11_IBUF_renamed_5")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-			netCounter++; // == 4
-			Assert.AreEqual("x20_IBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x20_IBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("x20_IBUF", netFinded.Name);
 			{
 				const int netPortRefCount = 6;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
@@ -788,18 +885,25 @@ namespace Tests
 					new Tuple<string, string>("I2","LUT_50"),
 					new Tuple<string, string>("I3","LUT_51"),
 					new Tuple<string, string>("I3","LUT_70"),
-					new Tuple<string, string>("O","x20_IBUF_renamed_4")
+					new Tuple<string, string>("O","x20_IBUF_renamed_2")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
 
-			netCounter++; // == 5
-			Assert.AreEqual("x21_IBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x21_IBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("x21_IBUF", netFinded.Name);
 			{
 				const int netPortRefCount = 6;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
@@ -809,18 +913,25 @@ namespace Tests
 					new Tuple<string, string>("I4","LUT_51"),
 					new Tuple<string, string>("I4","LUT_70"),
 					new Tuple<string, string>("I2","LUT_71"),
-					new Tuple<string, string>("O","x21_IBUF_renamed_5")
+					new Tuple<string, string>("O","x21_IBUF_renamed_3")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
 
-			netCounter++; // == 6
-			Assert.AreEqual("x40", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x40";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("x40", netFinded.Name);
 			{
 				const int netPortRefCount = 4;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
@@ -831,16 +942,23 @@ namespace Tests
 					new Tuple<string, string>("I2","LUT_z1"),
 					new Tuple<string, string>("O","LUT_40")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
 
-			netCounter++; // == 7
-			Assert.AreEqual("x41", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x41";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("x41", netFinded.Name);
 			{
 				const int netPortRefCount = 4;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
@@ -851,55 +969,76 @@ namespace Tests
 					new Tuple<string, string>("I1","LUT_z1"),
 					new Tuple<string, string>("O","LUT_41")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
 
-			netCounter++; // == 8
-			Assert.AreEqual("x80", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x80";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("x80", netFinded.Name);
 			{
 				const int netPortRefCount = 4;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
 				{
 
 					new Tuple<string, string>("I0","LUT_80"),
-					new Tuple<string, string>("I1","LUT_C00"),
-					new Tuple<string, string>("I2","LUT_C11"),
+					new Tuple<string, string>("I1","LUT_C0_R0"),
+					new Tuple<string, string>("I2","LUT_C1_R1"),
 					new Tuple<string, string>("O","LUT_80")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}'");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
 
-			netCounter++; // == 9
-			Assert.AreEqual("x81", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x81";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("x81", netFinded.Name);
 			{
 				const int netPortRefCount = 3;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
 				{
 
 					new Tuple<string, string>("I0","LUT_81"),
-					new Tuple<string, string>("I1","LUT_C11"),
+					new Tuple<string, string>("I1","LUT_C1_R1"),
 					new Tuple<string, string>("O","LUT_81")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
 
-			netCounter++; // == 10
-			Assert.AreEqual("z0_OBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "z0_OBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("z0_OBUF", netFinded.Name);
 			{
 				const int netPortRefCount = 3;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
@@ -907,18 +1046,25 @@ namespace Tests
 
 					new Tuple<string, string>("I0","LUT_z0"),
 					new Tuple<string, string>("O","LUT_z0"),
-					new Tuple<string, string>("I","z0_OBUF_renamed_8")
+					new Tuple<string, string>("I","z0_OBUF_renamed_6")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
 
-			netCounter++; // == 11
-			Assert.AreEqual("z1_OBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "z1_OBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("z1_OBUF", netFinded.Name);
 			{
 				const int netPortRefCount = 3;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
@@ -926,18 +1072,25 @@ namespace Tests
 
 					new Tuple<string, string>("I0","LUT_z1"),
 					new Tuple<string, string>("O","LUT_z1"),
-					new Tuple<string, string>("I","z1_OBUF_renamed_9")
+					new Tuple<string, string>("I","z1_OBUF_renamed_7")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
 
-			netCounter++; // == 12
-			Assert.AreEqual("x50", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x50";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("x50", netFinded.Name);
 			{
 				const int netPortRefCount = 3;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
@@ -946,15 +1099,22 @@ namespace Tests
 					new Tuple<string, string>("I0","LUT_50"),
 					new Tuple<string, string>("O","LUT_50")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-			netCounter++; // == 13
-			Assert.AreEqual("x51", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x51";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("x51", netFinded.Name);
 			{
 				const int netPortRefCount = 4;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
@@ -964,86 +1124,121 @@ namespace Tests
 					new Tuple<string, string>("I0","LUT_51"),
 					new Tuple<string, string>("O","LUT_51")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-			netCounter++; // == 14
-			Assert.AreEqual("x70", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x70";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("x70", netFinded.Name);
 			{
 				const int netPortRefCount = 4;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
 				{
 					new Tuple<string, string>("I0","LUT_70"),
-					new Tuple<string, string>("I2","LUT_C00"),
-					new Tuple<string, string>("I4","LUT_C11"),
+					new Tuple<string, string>("I2","LUT_C0_R0"),
+					new Tuple<string, string>("I4","LUT_C1_R1"),
 					new Tuple<string, string>("O","LUT_70")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-			netCounter++; // == 15
-			Assert.AreEqual("x71", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x71";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("x71", netFinded.Name);
 			{
 				const int netPortRefCount = 3;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
 				{
 					new Tuple<string, string>("I0","LUT_71"),
-					new Tuple<string, string>("I3","LUT_C11"),
+					new Tuple<string, string>("I3","LUT_C1_R1"),
 					new Tuple<string, string>("O","LUT_71")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
 
-			netCounter++; // == 16
-			Assert.AreEqual("C00_OBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "C0_R0_OBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("C0_R0_OBUF", netFinded.Name);
 			{
 				const int netPortRefCount = 3;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
 				{
-					new Tuple<string, string>("I0","LUT_C00"),
-					new Tuple<string, string>("O","LUT_C00"),
-					new Tuple<string, string>("I","C00_OBUF_renamed_6")
+					new Tuple<string, string>("I0","LUT_C0_R0"),
+					new Tuple<string, string>("O","LUT_C0_R0"),
+					new Tuple<string, string>("I","C0_R0_OBUF_renamed_8")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-			netCounter++; // == 17
-			Assert.AreEqual("C11_OBUF", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "C1_R1_OBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("C1_R1_OBUF", netFinded.Name);
 			{
 				const int netPortRefCount = 3;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
 				{
-					new Tuple<string, string>("I0","LUT_C11"),
-					new Tuple<string, string>("O","LUT_C11"),
-					new Tuple<string, string>("I","C11_OBUF_renamed_7")
+					new Tuple<string, string>("I0","LUT_C1_R1"),
+					new Tuple<string, string>("O","LUT_C1_R1"),
+					new Tuple<string, string>("I","C1_R1_OBUF_renamed_9")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
 
-			netCounter++; // == 18
-			Assert.AreEqual("c0", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "c0";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("c0", netFinded.Name);
 			{
 				const int netPortRefCount = 2;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
@@ -1051,15 +1246,22 @@ namespace Tests
 					new Tuple<string, string>("c0", null),
 					new Tuple<string, string>("I","c0_IBUF_renamed_0")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-			netCounter++; // == 19
-			Assert.AreEqual("c1", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "c1";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("c1", netFinded.Name);
 			{
 				const int netPortRefCount = 2;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
@@ -1067,146 +1269,207 @@ namespace Tests
 					new Tuple<string, string>("c1", null),
 					new Tuple<string, string>("I","c1_IBUF_renamed_1")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-			netCounter++; // == 20
-			Assert.AreEqual("x10", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x10";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("x10", netFinded.Name);
 			{
 				const int netPortRefCount = 2;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
 				{
 					new Tuple<string, string>("x10", null),
-					new Tuple<string, string>("I","x10_IBUF_renamed_2")
+					new Tuple<string, string>("I","x10_IBUF_renamed_4")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-			netCounter++; // == 21
-			Assert.AreEqual("x11", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x11";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("x11", netFinded.Name);
 			{
 				const int netPortRefCount = 2;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
 				{
 					new Tuple<string, string>("x11", null),
-					new Tuple<string, string>("I","x11_IBUF_renamed_3")
+					new Tuple<string, string>("I","x11_IBUF_renamed_5")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-			netCounter++; // == 22
-			Assert.AreEqual("x20", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x20";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("x20", netFinded.Name);
 			{
 				const int netPortRefCount = 2;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
 				{
 					new Tuple<string, string>("x20", null),
-					new Tuple<string, string>("I","x20_IBUF_renamed_4")
+					new Tuple<string, string>("I","x20_IBUF_renamed_2")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-			netCounter++; // == 23
-			Assert.AreEqual("x21", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "x21";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("x21", netFinded.Name);
 			{
 				const int netPortRefCount = 2;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
 				{
 					new Tuple<string, string>("x21", null),
-					new Tuple<string, string>("I","x21_IBUF_renamed_5")
+					new Tuple<string, string>("I","x21_IBUF_renamed_3")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-			netCounter++; // == 24
-			Assert.AreEqual("C00", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "C0_R0";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("C0_R0", netFinded.Name);
 			{
 				const int netPortRefCount = 2;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
 				{
-					new Tuple<string, string>("C00", null),
-					new Tuple<string, string>("I","C00_OBUF_renamed_6")
+					new Tuple<string, string>("C0_R0", null),
+					new Tuple<string, string>("O","C0_R0_OBUF_renamed_8")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-			netCounter++; // == 25
-			Assert.AreEqual("C11", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "C1_R1";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("C1_R1", netFinded.Name);
 			{
 				const int netPortRefCount = 2;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
 				{
-					new Tuple<string, string>("C11", null),
-					new Tuple<string, string>("I","C11_OBUF_renamed_7")
+					new Tuple<string, string>("C1_R1", null),
+					new Tuple<string, string>("O","C1_R1_OBUF_renamed_9")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-			netCounter++; // == 26
-			Assert.AreEqual("z0", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "z0";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("z0", netFinded.Name);
 			{
 				const int netPortRefCount = 2;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
 				{
 					new Tuple<string, string>("z0", null),
-					new Tuple<string, string>("I","z0_OBUF_renamed_8")
+					new Tuple<string, string>("O","z0_OBUF_renamed_6")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
-			netCounter++; // == 26
-			Assert.AreEqual("z1", edif.Library.Cell.View.Contents.Nets[netCounter].Name);
+			netName = "z1";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual("z1", netFinded.Name);
 			{
 				const int netPortRefCount = 2;
 				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
 				{
 					new Tuple<string, string>("z1", null),
-					new Tuple<string, string>("I","z1_OBUF_renamed_9")
+					new Tuple<string, string>("O","z1_OBUF_renamed_7")
 				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
 				for (int i = 0; i < netPortRefCount; i++)
 				{
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item1, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].Name);
-					Assert.AreEqual(portRefNameToInstanceRef[i].Item2, edif.Library.Cell.View.Contents.Nets[netCounter].Joined[i].InstanceRef.ReferedInstanceName);
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
 				}
 			}
 
 
-			Assert.AreEqual("adder_as_main", edif.Design.Name);
+			Assert.AreEqual("adder_as", edif.Design.Name);
 			Assert.AreEqual(1, edif.Design.CellRefs.Count);
-			Assert.AreEqual("adder_as_main", edif.Design.CellRefs[0].Name);
-			Assert.AreEqual("adder_as_main_lib", edif.Design.CellRefs[0].LibraryRef.Name);
+			Assert.AreEqual("adder_as", edif.Design.CellRefs[0].Name);
+			Assert.AreEqual("adder_as_lib", edif.Design.CellRefs[0].LibraryRef.Name);
 			Assert.AreEqual(1, edif.Design.Properties.Count);
 			Assert.AreEqual("Xilinx", edif.Design.Properties[0].Owner);
 			Assert.AreEqual(PropertyValueType.String, edif.Design.Properties[0].Value.Type);

@@ -28,5 +28,11 @@ namespace BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.
 		}
 
 		#endregion [IProperty implmentation]
+
+		public override string ToString()
+		{
+			return
+				$"PropertyType: '{PropertyType}'. Owner: '{Owner}'. Value.Type: '{Value?.Type}'. Value.Value: '{Value?.Value}'.";
+		}
 	}
 }
