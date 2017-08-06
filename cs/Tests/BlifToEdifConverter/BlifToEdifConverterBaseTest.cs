@@ -2703,6 +2703,906 @@ namespace Tests
 		}
 
 		[TestMethod]
+		public void TestOnjectModelCompareCm82()
+		{
+			string blifSrc = GetEmbeddedResouceSrc("Tests.DataFiles.cm82.cm82a.blif");
+
+			var srcLines = blifSrc.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+			Blif blif = BlifParser.GetBlif(srcLines);
+
+			ITextViewElementsFactory factory = GetTextViewElementsFactory();
+			string renameLog;
+			string edifModelName = "main_true_Table_schema_ver01";
+			BlifToEdifModelConverter.EdifConstants edifConstants = new BlifToEdifModelConverter.EdifConstants(edifModelName);
+			edifConstants.StatusWrittenTimestamp = new DateTime(2017, 2, 26, 22, 35, 32);
+			IEdif edif = blif.ToEdif(factory, edifConstants, out renameLog);
+
+			Assert.IsNotNull(edif);
+
+			Assert.AreEqual(edifModelName, edif.Name);
+
+			Assert.AreEqual(2, edif.Version.MajorVersion);
+			Assert.AreEqual(0, edif.Version.MidVersion);
+			Assert.AreEqual(0, edif.Version.MinorVersion);
+
+			Assert.AreEqual(0, edif.Level.Level);
+
+			Assert.AreEqual(0, edif.KeywordMap.KeywordLevel);
+
+
+			Assert.AreEqual(edifConstants.StatusWrittenTimestamp, edif.Status.Written.Timestamp);
+			Assert.AreEqual(1, edif.Status.Written.Comments.Count);//TODO: is ok??
+			Assert.AreEqual("Do we need it in converter?", edif.Status.Written.Comments[0].Text);
+
+			Assert.AreEqual("UNISIMS", edif.External.Name);
+			Assert.AreEqual(0, edif.External.EdifLevel.Level);
+			Assert.AreEqual("numberDefinition", edif.External.Technology.Name);
+			Assert.AreEqual(4, edif.External.Cells.Count);
+
+			int cellCounter = 0;
+			Assert.AreEqual("LUT2", edif.External.Cells[cellCounter].Name);
+			Assert.AreEqual(CellType.GENERIC, edif.External.Cells[cellCounter].CellType);
+			Assert.AreEqual("view_1", edif.External.Cells[cellCounter].View.Name);
+			Assert.AreEqual(ViewType.NETLIST, edif.External.Cells[cellCounter].View.ViewType);
+			Assert.IsNull(edif.External.Cells[cellCounter].View.Contents);
+			Assert.IsNull(edif.External.Cells[cellCounter].View.Interface.Designator);
+			Assert.IsNull(edif.External.Cells[cellCounter].View.Interface.Properties);
+			Assert.AreEqual(3, edif.External.Cells[cellCounter].View.Interface.Ports.Count);
+			for (int i = 0; i < 2; i++)
+			{
+				Assert.AreEqual("I" + i, edif.External.Cells[cellCounter].View.Interface.Ports[i].Name);
+				Assert.AreEqual(PortDirection.INPUT, edif.External.Cells[cellCounter].View.Interface.Ports[i].Direction);
+			}
+			Assert.AreEqual("O", edif.External.Cells[cellCounter].View.Interface.Ports[2].Name);
+			Assert.AreEqual(PortDirection.OUTPUT, edif.External.Cells[cellCounter].View.Interface.Ports[2].Direction);
+
+			cellCounter++; // == 1
+			Assert.AreEqual("LUT3", edif.External.Cells[cellCounter].Name);
+			Assert.AreEqual(CellType.GENERIC, edif.External.Cells[cellCounter].CellType);
+			Assert.AreEqual("view_1", edif.External.Cells[cellCounter].View.Name);
+			Assert.AreEqual(ViewType.NETLIST, edif.External.Cells[cellCounter].View.ViewType);
+			Assert.IsNull(edif.External.Cells[cellCounter].View.Contents);
+			Assert.IsNull(edif.External.Cells[cellCounter].View.Interface.Designator);
+			Assert.IsNull(edif.External.Cells[cellCounter].View.Interface.Properties);
+			Assert.AreEqual(4, edif.External.Cells[cellCounter].View.Interface.Ports.Count);
+			for (int i = 0; i < 3; i++)
+			{
+				Assert.AreEqual("I" + i, edif.External.Cells[cellCounter].View.Interface.Ports[i].Name);
+				Assert.AreEqual(PortDirection.INPUT, edif.External.Cells[cellCounter].View.Interface.Ports[i].Direction);
+			}
+			Assert.AreEqual("O", edif.External.Cells[cellCounter].View.Interface.Ports[3].Name);
+			Assert.AreEqual(PortDirection.OUTPUT, edif.External.Cells[cellCounter].View.Interface.Ports[3].Direction);
+
+
+			cellCounter++; // == 2
+			Assert.AreEqual("IBUF", edif.External.Cells[cellCounter].Name);
+			Assert.AreEqual(CellType.GENERIC, edif.External.Cells[cellCounter].CellType);
+			Assert.AreEqual("view_1", edif.External.Cells[cellCounter].View.Name);
+			Assert.AreEqual(ViewType.NETLIST, edif.External.Cells[cellCounter].View.ViewType);
+			Assert.IsNull(edif.External.Cells[cellCounter].View.Contents);
+			Assert.IsNull(edif.External.Cells[cellCounter].View.Interface.Designator);
+			Assert.IsNull(edif.External.Cells[cellCounter].View.Interface.Properties);
+			Assert.AreEqual(2, edif.External.Cells[cellCounter].View.Interface.Ports.Count);
+			Assert.AreEqual("I", edif.External.Cells[cellCounter].View.Interface.Ports[0].Name);
+			Assert.AreEqual(PortDirection.INPUT, edif.External.Cells[cellCounter].View.Interface.Ports[0].Direction);
+			Assert.AreEqual("O", edif.External.Cells[cellCounter].View.Interface.Ports[1].Name);
+			Assert.AreEqual(PortDirection.OUTPUT, edif.External.Cells[cellCounter].View.Interface.Ports[1].Direction);
+
+			cellCounter++; // == 3
+			Assert.AreEqual("OBUF", edif.External.Cells[cellCounter].Name);
+			Assert.AreEqual(CellType.GENERIC, edif.External.Cells[cellCounter].CellType);
+			Assert.AreEqual("view_1", edif.External.Cells[cellCounter].View.Name);
+			Assert.AreEqual(ViewType.NETLIST, edif.External.Cells[cellCounter].View.ViewType);
+			Assert.IsNull(edif.External.Cells[cellCounter].View.Contents);
+			Assert.IsNull(edif.External.Cells[cellCounter].View.Interface.Designator);
+			Assert.IsNull(edif.External.Cells[cellCounter].View.Interface.Properties);
+			Assert.AreEqual(2, edif.External.Cells[cellCounter].View.Interface.Ports.Count);
+			Assert.AreEqual("I", edif.External.Cells[cellCounter].View.Interface.Ports[0].Name);
+			Assert.AreEqual(PortDirection.INPUT, edif.External.Cells[cellCounter].View.Interface.Ports[0].Direction);
+			Assert.AreEqual("O", edif.External.Cells[cellCounter].View.Interface.Ports[1].Name);
+			Assert.AreEqual(PortDirection.OUTPUT, edif.External.Cells[cellCounter].View.Interface.Ports[1].Direction);
+
+
+
+
+			Assert.AreEqual("main_true_Table_schema_ver01_lib", edif.Library.Name);
+			Assert.AreEqual(0, edif.Library.Level.Level);
+			Assert.AreEqual("numberDefinition", edif.Library.Technology.Name);
+			Assert.AreEqual("main_true_Table_schema_ver01", edif.Library.Cell.Name);
+			Assert.AreEqual(CellType.GENERIC, edif.Library.Cell.CellType);
+			Assert.AreEqual("view_1", edif.Library.Cell.View.Name);
+			Assert.AreEqual(ViewType.NETLIST, edif.Library.Cell.View.ViewType);
+			{
+				const int portCount = 8;
+				Assert.AreEqual(portCount, edif.Library.Cell.View.Interface.Ports.Count);
+				Tuple<string, PortDirection>[] portEtalons = new Tuple<string, PortDirection>[portCount]
+				{
+					new Tuple<string, PortDirection>("a", PortDirection.INPUT),
+					new Tuple<string, PortDirection>("b", PortDirection.INPUT),
+					new Tuple<string, PortDirection>("c", PortDirection.INPUT),
+					new Tuple<string, PortDirection>("d", PortDirection.INPUT),
+					new Tuple<string, PortDirection>("e", PortDirection.INPUT),
+					new Tuple<string, PortDirection>("f", PortDirection.OUTPUT),
+					new Tuple<string, PortDirection>("g", PortDirection.OUTPUT),
+					new Tuple<string, PortDirection>("h", PortDirection.OUTPUT)
+				};
+
+				for (int i = 0; i < portCount; i++)
+				{
+					IPort port = edif.Library.Cell.View.Interface.Ports[i];
+					Tuple<string, PortDirection> etalonPort = portEtalons.FirstOrDefault(
+						et => et.Item1.Equals(port.Name, StringComparison.InvariantCulture));
+					Assert.IsNotNull(etalonPort, $"Can not find etalon port with name '{port.Name}'");
+					Assert.AreEqual(etalonPort.Item1, edif.Library.Cell.View.Interface.Ports[i].Name);
+					Assert.AreEqual(etalonPort.Item2, edif.Library.Cell.View.Interface.Ports[i].Direction);
+				}
+			}
+			Assert.AreEqual("xc6slx4-3-tqg144", edif.Library.Cell.View.Interface.Designator);
+			{
+				const int propertiesCount = 7;
+				Assert.AreEqual(propertiesCount, edif.Library.Cell.View.Interface.Properties.Count);
+				Tuple<PropertyType, PropertyValueType, object, string>[] propertiesEtalons =
+					new Tuple<PropertyType, PropertyValueType, object, string>[propertiesCount]
+					{
+						new Tuple<PropertyType, PropertyValueType, object, string>
+							(PropertyType.TYPE, PropertyValueType.String, "main_true_Table_schema_ver01", "Xilinx"),
+						new Tuple<PropertyType, PropertyValueType, object, string>
+							(PropertyType.KEEP_HIERARCHY, PropertyValueType.String, "TRUE", "Xilinx"),
+						new Tuple<PropertyType, PropertyValueType, object, string>
+							(PropertyType.SHREG_MIN_SIZE, PropertyValueType.String, "2", "Xilinx"),
+						new Tuple<PropertyType, PropertyValueType, object, string>
+							(PropertyType.SHREG_EXTRACT_NGC, PropertyValueType.String, "YES", "Xilinx"),
+						new Tuple<PropertyType, PropertyValueType, object, string>
+							(PropertyType.NLW_UNIQUE_ID, PropertyValueType.Integer, 0, "Xilinx"),
+						new Tuple<PropertyType, PropertyValueType, object, string>
+							(PropertyType.NLW_MACRO_TAG, PropertyValueType.Integer, 0, "Xilinx"),
+						new Tuple<PropertyType, PropertyValueType, object, string>
+							(PropertyType.NLW_MACRO_ALIAS, PropertyValueType.String, "main_true_Table_schema_ver01_main_true_Table_schema_ver01", "Xilinx")
+					};
+
+				for (int i = 0; i < propertiesCount; i++)
+				{
+					IProperty property = edif.Library.Cell.View.Interface.Properties[i];
+					Tuple<PropertyType, PropertyValueType, object, string> etalonProperty = propertiesEtalons.FirstOrDefault(
+						et => et.Item1 == property.PropertyType && et.Item2 == property.Value.Type
+							&& et.Item3.Equals(property.Value.Value) && et.Item4.Equals(property.Owner));
+					Assert.IsNotNull(etalonProperty, $"Can not find etalon propery for '{property}'");
+					Assert.AreEqual(etalonProperty.Item1, edif.Library.Cell.View.Interface.Properties[i].PropertyType);
+					Assert.AreEqual(etalonProperty.Item2, edif.Library.Cell.View.Interface.Properties[i].Value.Type);
+					Assert.AreEqual(etalonProperty.Item3, edif.Library.Cell.View.Interface.Properties[i].Value.Value);
+					Assert.AreEqual(etalonProperty.Item4, edif.Library.Cell.View.Interface.Properties[i].Owner);
+				}
+			}
+
+			Assert.AreEqual(14, edif.Library.Cell.View.Contents.Instances.Count);
+
+			string instanceName = "LUT_f";
+			IInstance instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT2", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("6", instance.Properties[1].Value.Value);
+
+			
+			instanceName = "LUT_o";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT3", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("17", instance.Properties[1].Value.Value);
+
+			
+			instanceName = "LUT_s";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT2", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("6", instance.Properties[1].Value.Value);
+
+			
+			instanceName = "LUT_h";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT3", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("8E", instance.Properties[1].Value.Value);
+			
+			instanceName = "LUT_r";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT2", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("6", instance.Properties[1].Value.Value);
+
+			
+			instanceName = "LUT_g";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.IsNull(instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("LUT2", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(2, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			Assert.AreEqual("Xilinx", instance.Properties[1].Owner);
+			Assert.AreEqual(PropertyType.INIT, instance.Properties[1].PropertyType);
+			Assert.AreEqual(PropertyValueType.String, instance.Properties[1].Value.Type);
+			Assert.AreEqual("9", instance.Properties[1].Value.Value);
+
+
+			
+			instanceName = "a_IBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("a_IBUF_renamed_0", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("IBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+
+			instanceName = "b_IBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("b_IBUF_renamed_1", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("IBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+
+			instanceName = "c_IBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("c_IBUF_renamed_2", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("IBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+
+			instanceName = "d_IBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("d_IBUF_renamed_3", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("IBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+
+			instanceName = "e_IBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("e_IBUF_renamed_4", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("IBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+			
+
+			instanceName = "f_OBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("f_OBUF_renamed_5", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("OBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+
+			instanceName = "g_OBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("g_OBUF_renamed_6", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("OBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+
+			instanceName = "h_OBUF";
+			instance = edif.Library.Cell.View.Contents.Instances.FirstOrDefault(
+				i => instanceName.Equals(i.Name));
+			Assert.IsNotNull(instance, $"Can not find instance with name '{instanceName}'");
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual(instanceName, instance.Name);
+			Assert.AreEqual("h_OBUF_renamed_7", instance.RenamedSynonym);
+			Assert.AreEqual("view_1", instance.ViewRef.Name);
+			Assert.AreEqual("OBUF", instance.ViewRef.CellRef.Name);
+			Assert.AreEqual("UNISIMS", instance.ViewRef.CellRef.LibraryRef.Name);
+			Assert.AreEqual(1, instance.Properties.Count);
+			Assert.AreEqual("Xilinx", instance.Properties[0].Owner);
+			Assert.AreEqual(PropertyType.XSTLIB, instance.Properties[0].PropertyType);
+			Assert.AreEqual(PropertyValueType.Boolean, instance.Properties[0].Value.Type);
+			Assert.AreEqual(true, instance.Properties[0].Value.Value);
+
+			
+
+			Assert.AreEqual(19, edif.Library.Cell.View.Contents.Nets.Count);
+
+
+			string netName = "a_IBUF";
+			INet netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 3;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I1","LUT_f"),
+					new Tuple<string, string>("I2","LUT_o"),
+					new Tuple<string, string>("O","a_IBUF_renamed_0")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+
+			netName = "b_IBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 3;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I1","LUT_o"),
+					new Tuple<string, string>("I1","LUT_s"),
+					new Tuple<string, string>("O","b_IBUF_renamed_1")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+
+			netName = "c_IBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 3;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I0","LUT_o"),
+					new Tuple<string, string>("I0","LUT_s"),
+					new Tuple<string, string>("O","c_IBUF_renamed_2")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+			netName = "d_IBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 3;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I1","LUT_h"),
+					new Tuple<string, string>("I1","LUT_r"),
+					new Tuple<string, string>("O","d_IBUF_renamed_3")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+			netName = "e_IBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 3;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I0","LUT_h"),
+					new Tuple<string, string>("I0","LUT_r"),
+					new Tuple<string, string>("O","e_IBUF_renamed_4")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+
+			netName = "f_OBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 2;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("O","LUT_f"),
+					new Tuple<string, string>("I","f_OBUF_renamed_5")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+
+			netName = "o";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 3;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("O","LUT_o"),
+					new Tuple<string, string>("I2","LUT_h"),
+					new Tuple<string, string>("I1","LUT_g")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+
+			netName = "s";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 2;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I0","LUT_f"),
+					new Tuple<string, string>("O","LUT_s")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+
+			netName = "h_OBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 2;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("O","LUT_h"),
+					new Tuple<string, string>("I","h_OBUF_renamed_7")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}'");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+
+			netName = "r";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 2;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("I0","LUT_g"),
+					new Tuple<string, string>("O","LUT_r")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+
+			netName = "g_OBUF";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 2;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("O","LUT_g"),
+					new Tuple<string, string>("I","g_OBUF_renamed_6")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+
+			netName = "a";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 2;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("a",null),
+					new Tuple<string, string>("I","a_IBUF_renamed_0")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+
+			netName = "b";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 2;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("b",null),
+					new Tuple<string, string>("I","b_IBUF_renamed_1")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+			netName = "c";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 2;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("c",null),
+					new Tuple<string, string>("I","c_IBUF_renamed_2")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+			netName = "d";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 2;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("d",null),
+					new Tuple<string, string>("I","d_IBUF_renamed_3")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+			netName = "e";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 2;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("e",null),
+					new Tuple<string, string>("I","e_IBUF_renamed_4")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+
+			netName = "f";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 2;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("f",null),
+					new Tuple<string, string>("O","f_OBUF_renamed_5")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+			netName = "g";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 2;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("g",null),
+					new Tuple<string, string>("O","g_OBUF_renamed_6")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+
+
+			netName = "h";
+			netFinded = edif.Library.Cell.View.Contents.Nets.FirstOrDefault(n => netName.Equals(n.Name));
+			Assert.IsNotNull(netFinded, $"Can not find net with name '{netName}'");
+			Assert.AreEqual(netName, netFinded.Name);
+			{
+				const int netPortRefCount = 2;
+				Tuple<string, string>[] portRefNameToInstanceRef = new Tuple<string, string>[netPortRefCount]
+				{
+					new Tuple<string, string>("h",null),
+					new Tuple<string, string>("O","h_OBUF_renamed_7")
+				};
+				Assert.AreEqual(netPortRefCount, netFinded.Joined.Count);
+				for (int i = 0; i < netPortRefCount; i++)
+				{
+					IPortRef portRef = netFinded.Joined[i];
+					Tuple<string, string> portRefEtalon = portRefNameToInstanceRef.FirstOrDefault(
+						pr => pr.Item1.Equals(portRef.Name) && string.Equals(pr.Item2, portRef.InstanceRef?.ReferedInstanceName));
+					Assert.IsNotNull(portRefEtalon, $"Can not find etalon with name '{portRef.Name}' and ReferedInstanceName: '{portRef.InstanceRef?.ReferedInstanceName}");
+					Assert.AreEqual(portRefEtalon.Item1, netFinded.Joined[i].Name);
+					Assert.AreEqual(portRefEtalon.Item2, netFinded.Joined[i].InstanceRef?.ReferedInstanceName);
+				}
+			}
+			
+
+			Assert.AreEqual("main_true_Table_schema_ver01", edif.Design.Name);
+			Assert.AreEqual(1, edif.Design.CellRefs.Count);
+			Assert.AreEqual("main_true_Table_schema_ver01", edif.Design.CellRefs[0].Name);
+			Assert.AreEqual("main_true_Table_schema_ver01_lib", edif.Design.CellRefs[0].LibraryRef.Name);
+			Assert.AreEqual(1, edif.Design.Properties.Count);
+			Assert.AreEqual("Xilinx", edif.Design.Properties[0].Owner);
+			Assert.AreEqual(PropertyValueType.String, edif.Design.Properties[0].Value.Type);
+			Assert.AreEqual("xc6slx4-3-tqg144", edif.Design.Properties[0].Value.Value);
+			Assert.AreEqual(PropertyType.PART, edif.Design.Properties[0].PropertyType);
+		}
+
+		[TestMethod]
 		public void TestSrcStringCompareAdderAs()
 		{
 			string blifSrc = GetEmbeddedResouceSrc("Tests.DataFiles.AdderAs.adder-as.blif");

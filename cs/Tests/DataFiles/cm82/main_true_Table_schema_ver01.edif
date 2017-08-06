@@ -113,6 +113,7 @@
             )
             (designator "xc6slx4-3-tqg144")
             (property TYPE (string "main_true_Table_schema_ver01") (owner "Xilinx"))
+			(property KEEP_HIERARCHY (string "TRUE") (owner "Xilinx")) # проверить или эта строка нужна в эталонахы
             (property SHREG_MIN_SIZE (string "2") (owner "Xilinx"))
             (property SHREG_EXTRACT_NGC (string "YES") (owner "Xilinx"))
             (property NLW_UNIQUE_ID (integer 0) (owner "Xilinx"))
