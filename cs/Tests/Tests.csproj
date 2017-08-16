@@ -36,6 +36,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="dotMemory.Unit, Version=103.0.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.dotMemoryUnit.2.3.20160517.113140\lib\dotMemory.Unit.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>
@@ -76,9 +80,11 @@
     <EmbeddedResource Include="DataFiles\AdderAs2\adder_as_main.edif" />
     <EmbeddedResource Include="DataFiles\cm82\cm82a.blif" />
     <EmbeddedResource Include="DataFiles\cm82\main_true_Table_schema_ver01.edif" />
+    <EmbeddedResource Include="DataFiles\Adder7lu2\adder_7lut2.blif" />
     <None Include="Files\adder-as.blif" />
     <None Include="Files\cm82a.blif" />
     <None Include="Files\Diploma-Tasks-rel02-1-data.blif" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
