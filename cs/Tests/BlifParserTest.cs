@@ -1,9 +1,8 @@
 ﻿using System;
 using BLIFtoEDIF_Converter.Logic;
-using BLIFtoEDIF_Converter.Logic.Model.Blif;
-using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Implementation.FastImpl;
-using BLIFtoEDIF_Converter.Parser.Blif;
+using BLIFtoEDIF_Converter.Logic.Parser.Blif;
+using BLIFtoEDIF_Converter.Model.Blif;
+using BLIFtoEDIF_Converter.Model.Blif.Function;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests

@@ -1,5 +1,5 @@
-﻿using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Property;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory;
+﻿using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Property;
+using BLIFtoEDIF_Converter.Model.Edif.Factory;
 
 namespace BLIFtoEDIF_Converter.Util
 {

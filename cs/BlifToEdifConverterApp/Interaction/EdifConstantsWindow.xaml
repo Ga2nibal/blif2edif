@@ -6,8 +6,9 @@
         xmlns:local="clr-namespace:BlifToEdifConverterApp.Interaction"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="EdifConstantsWindow" Height="340" Width="300">
-        <Grid Margin="5,10">
+        Title="EdifConstantsWindow" Height="440" Width="300">
+	
+	<Grid Margin="5,10">
                 <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="10*"/>
                         <ColumnDefinition Width="10*"/>
@@ -24,7 +25,10 @@
                         <RowDefinition Height="*"/>
                          <RowDefinition Height="*"/>
                            <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
 
                 <TextBlock Margin="3,3,3,3"
                    Text="EDIF additional values"
@@ -58,7 +62,34 @@
                             Grid.Row="8" Grid.Column="0"/>
                  <TextBox  Margin="5"
                           AcceptsReturn="True" Name="ExternalNameBox" Grid.Row="8" Grid.Column="1"/>
-                  <Button Margin="5" Content="OK" Name="OkButton" Grid.Row="9" Grid.Column="0" Click="OkButton_OnClick"/>
-                  <Button Margin="5" Content="Cancel" Name="CancelButton" Grid.Row="9" Grid.Column="1" Click="CancelButton_OnClick"/>
+		<TextBlock Margin="5" Text="Device" Grid.Row="9" Grid.Column="0"/>
+		<ComboBox  Margin="5"  Name="DeviceComboBox" Grid.Row="9" Grid.Column="1" IsEditable="True" >
+			<TextBlock>XC6SLX4</TextBlock>
+			<TextBlock>XC6SLX9</TextBlock>
+			<TextBlock>XC6SLX16</TextBlock>
+			<TextBlock>XC6SLX25</TextBlock>
+			<TextBlock>XC6SLX25T</TextBlock>
+			<TextBlock>XC6SLX45</TextBlock>
+			<TextBlock>XC6SLX45T</TextBlock>
+			<TextBlock>XC6SLX75</TextBlock>
+			<TextBlock>XC6SLX75T</TextBlock>
+			<TextBlock>XC6SLX100</TextBlock>
+			<TextBlock>XC6SLX100T</TextBlock>
+			<TextBlock>XC6SLX150</TextBlock>
+			<TextBlock>XC6SLX150T</TextBlock>
+		</ComboBox>
+		<TextBlock Margin="5" Text="Package" Grid.Row="10" Grid.Column="0"/>
+		<ComboBox  Margin="5"  Name="PackageComboBox" Grid.Row="10" Grid.Column="1" IsEditable="True">
+			<TextBlock>TQG144</TextBlock>
+			<TextBlock>CPG196</TextBlock>
+			<TextBlock>CSG255</TextBlock>
+		</ComboBox>
+		<TextBlock Margin="5" Text="Speed" Grid.Row="11" Grid.Column="0"/>
+		<ComboBox  Margin="5"  Name="SpeedComboBox" Grid.Row="11" Grid.Column="1" IsEditable="True">
+			<TextBlock>-3</TextBlock>
+			<TextBlock>-2</TextBlock>
+		</ComboBox>
+		<Button Margin="5" Content="OK" Name="OkButton" Grid.Row="12" Grid.Column="0" Click="OkButton_OnClick"/>
+                  <Button Margin="5" Content="Cancel" Name="CancelButton" Grid.Row="12" Grid.Column="1" Click="CancelButton_OnClick"/>
          </Grid>
 </Window>

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using BLIFtoEDIF_Converter.InitCalculator;
-using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
-using BLIFtoEDIF_Converter.Parser.Blif;
+using BLIFtoEDIF_Converter.Logic.InitCalculator;
+using BLIFtoEDIF_Converter.Logic.Parser.Blif;
+using BLIFtoEDIF_Converter.Model.Blif.Function;
 
 namespace BLIFtoEDIF_Converter
 {

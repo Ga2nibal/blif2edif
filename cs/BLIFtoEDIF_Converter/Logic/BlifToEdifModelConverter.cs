@@ -3,27 +3,27 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using BLIFtoEDIF_Converter.InitCalculator;
-using BLIFtoEDIF_Converter.Logic.Model.Blif;
-using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Cell;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Instance;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Library;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Port;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Property;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.View;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory;
+using BLIFtoEDIF_Converter.Logic.InitCalculator;
+using BLIFtoEDIF_Converter.Model.Blif;
+using BLIFtoEDIF_Converter.Model.Blif.Function;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Cell;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Instance;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Library;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Port;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Property;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.View;
+using BLIFtoEDIF_Converter.Model.Edif.Factory;
 using BLIFtoEDIF_Converter.Util;
-using PortDirection = BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Port.PortDirection;
+using PortDirection = BLIFtoEDIF_Converter.Model.Edif.Abstraction.Port.PortDirection;
 
 namespace BLIFtoEDIF_Converter.Logic
 {
 	public static class BlifToEdifModelConverter
 	{
-		public class EdifConstants
+		public class EdifAdditionalData
 		{
-			public EdifConstants(string modelName)
+			public EdifAdditionalData(string modelName)
 			{
 				if(string.IsNullOrEmpty(modelName))
 					throw new ArgumentNullException(nameof(modelName), $"{nameof(modelName)} is not defined");
@@ -78,20 +78,36 @@ namespace BLIFtoEDIF_Converter.Logic
 				set { _technologyLibraryName = value; }
 			}
 
-			public string DesignPropertyStringValue { get; set; } = "xc6slx4-3-tqg144";
+			private string _designPropertyValue;
+
+			public string DesignPropertyStringValue
+			{
+				get { return _designPropertyValue ?? $"{Device}{Speed}-{Package}"; }
+				set { _designPropertyValue = value; }
+			}
 
 			public string PropertyOwner { get; set; } = "Xilinx";
 
 			public string GenericIbufName { get; set; } = "IBUF";
 			public string GenericObufName { get; set; } = "OBUF";
 			public string GenericViewName { get; set; } = "view_1";
-			public string LibraryInterfaceDesignator { get; set; } = "xc6slx4-3-tqg144";
+
+			private string _libraryInterfaceDesignator;
+			public string LibraryInterfaceDesignator
+			{
+				get { return _libraryInterfaceDesignator ?? $"{Device}{Speed}-{Package}"; }
+				set { _libraryInterfaceDesignator = value; }
+			}
+
+			public string Device { get; set; } = "xc6slx4";
+			public string Package { get; set; } = "tqg144";
+			public string Speed { get; set; } = "-3";
 
 			public DateTime StatusWrittenTimestamp { get; set; } = DateTime.Now;
 		}
 
 		public static IEdif ToEdif(this Blif blif, ITextViewElementsFactory edifFactory, 
-			EdifConstants edifConstants, out string renameLog)
+			EdifAdditionalData edifAdditionalData, out string renameLog)
 		{
 			if (null == blif)
 				throw new ArgumentNullException(nameof(blif), $"{nameof(blif)} is not defined");
@@ -99,38 +115,38 @@ namespace BLIFtoEDIF_Converter.Logic
 				throw new ArgumentNullException(nameof(edifFactory), $"{nameof(edifFactory)} is not defined");
 			HashSet<string> sanitizedNames;
 			RenamePortsInEdifConvention(blif, out renameLog, out sanitizedNames);
-			IEdifVersion edifVersion = edifFactory.CreateEdifVersion(edifConstants.EdifMajorVersion,
-				edifConstants.EdifMidVersion,
-				edifConstants.EdifMinorVersion);
-			IEdifLevel edifLevel = edifFactory.CreateEdifLevel(edifConstants.ModelEdifLevel);
-			IKeywordMap keywordMap = edifFactory.CreateKeywordMap(edifConstants.KeywordMapLevel);
+			IEdifVersion edifVersion = edifFactory.CreateEdifVersion(edifAdditionalData.EdifMajorVersion,
+				edifAdditionalData.EdifMidVersion,
+				edifAdditionalData.EdifMinorVersion);
+			IEdifLevel edifLevel = edifFactory.CreateEdifLevel(edifAdditionalData.ModelEdifLevel);
+			IKeywordMap keywordMap = edifFactory.CreateKeywordMap(edifAdditionalData.KeywordMapLevel);
 
-			IWritten written = edifFactory.CreateWritten(edifConstants.StatusWrittenTimestamp,
-				new List<IComment>() {edifFactory.CreateComment(edifConstants.StatusWrittenComment)});
+			IWritten written = edifFactory.CreateWritten(edifAdditionalData.StatusWrittenTimestamp,
+				new List<IComment>() {edifFactory.CreateComment("# RenameLog: " + renameLog) });
 			IStatus status = edifFactory.CreateStatus(written);
 
-			IEdifLevel edifExternalLevel = edifFactory.CreateEdifLevel(edifConstants.EdifExternalLevel);
-			ITechnology externalTechnology = edifFactory.CreateTechnology(edifConstants.TechnologyExternalName);
-			IList<ICell> externalGenericCells = GetExternalGenericCells(blif, edifFactory, edifConstants);
-			IExternal external = edifFactory.CreateExternal(edifConstants.ExternalName, edifExternalLevel,
+			IEdifLevel edifExternalLevel = edifFactory.CreateEdifLevel(edifAdditionalData.EdifExternalLevel);
+			ITechnology externalTechnology = edifFactory.CreateTechnology(edifAdditionalData.TechnologyExternalName);
+			IList<ICell> externalGenericCells = GetExternalGenericCells(blif, edifFactory, edifAdditionalData);
+			IExternal external = edifFactory.CreateExternal(edifAdditionalData.ExternalName, edifExternalLevel,
 				externalTechnology,
 				externalGenericCells);
 
-			string libraryName = GetLibraryName(blif, edifConstants);
-			IEdifLevel edifLibraryLevel = edifFactory.CreateEdifLevel(edifConstants.EdifLibraryLevel);
-			ITechnology libraryTechnology = edifFactory.CreateTechnology(edifConstants.TechnologyLibraryName);
-			ICell libraryCell = GetLibraryCell(blif, edifFactory, edifConstants, sanitizedNames);
+			string libraryName = GetLibraryName(blif, edifAdditionalData);
+			IEdifLevel edifLibraryLevel = edifFactory.CreateEdifLevel(edifAdditionalData.EdifLibraryLevel);
+			ITechnology libraryTechnology = edifFactory.CreateTechnology(edifAdditionalData.TechnologyLibraryName);
+			ICell libraryCell = GetLibraryCell(blif, edifFactory, edifAdditionalData, sanitizedNames);
 			ILibrary library = edifFactory.CreateLibrary(libraryName, edifLibraryLevel, libraryTechnology, libraryCell);
 
 			ILibraryRef libraryRef = edifFactory.CreateLibraryRef(libraryName);
-			ICellRef cellRef = edifFactory.CreateCellRef(edifConstants.ModelName, libraryRef);
-			IPropertyValue propertyValue = edifFactory.CreatePropertyValue(edifConstants.DesignPropertyStringValue,
+			ICellRef cellRef = edifFactory.CreateCellRef(edifAdditionalData.ModelName, libraryRef);
+			IPropertyValue propertyValue = edifFactory.CreatePropertyValue(edifAdditionalData.DesignPropertyStringValue,
 				PropertyValueType.String);
-			IProperty property = edifFactory.CreateProperty(PropertyType.PART, propertyValue, edifConstants.PropertyOwner);
-			IDesign design = edifFactory.CreateDesign(edifConstants.ModelName, new List<ICellRef>() {cellRef},
+			IProperty property = edifFactory.CreateProperty(PropertyType.PART, propertyValue, edifAdditionalData.PropertyOwner);
+			IDesign design = edifFactory.CreateDesign(edifAdditionalData.ModelName, new List<ICellRef>() {cellRef},
 				new List<IProperty>() {property});
 
-			IEdif result = edifFactory.CreateEdif(edifConstants.ModelName, edifVersion, edifLevel, keywordMap, status,
+			IEdif result = edifFactory.CreateEdif(edifAdditionalData.ModelName, edifVersion, edifLevel, keywordMap, status,
 				external, library, design);
 
 			return result;
@@ -242,19 +258,19 @@ namespace BLIFtoEDIF_Converter.Logic
 		}
 
 		private static ICell GetLibraryCell(Blif blif, ITextViewElementsFactory edifFactory, 
-			EdifConstants edifConstants, HashSet<string> sanitizedNames)
+			EdifAdditionalData edifAdditionalData, HashSet<string> sanitizedNames)
 		{
-			IInterface @interface = CreateLibraryinterface(blif, edifFactory, edifConstants);
-			IContents contents = CreateLibraryContents(blif, edifFactory, edifConstants, sanitizedNames);
-			IView view = edifFactory.CreateView(edifConstants.GenericViewName, ViewType.NETLIST, @interface, contents);
-			ICell cellResult = edifFactory.CreateCell(edifConstants.ModelName, CellType.GENERIC, view);
+			IInterface @interface = CreateLibraryinterface(blif, edifFactory, edifAdditionalData);
+			IContents contents = CreateLibraryContents(blif, edifFactory, edifAdditionalData, sanitizedNames);
+			IView view = edifFactory.CreateView(edifAdditionalData.GenericViewName, ViewType.NETLIST, @interface, contents);
+			ICell cellResult = edifFactory.CreateCell(edifAdditionalData.ModelName, CellType.GENERIC, view);
 			return cellResult;
 		}
 
 		private static IContents CreateLibraryContents(Blif blif, ITextViewElementsFactory edifFactory,
-			EdifConstants edifConstants, HashSet<string> sanitizedNames)
+			EdifAdditionalData edifAdditionalData, HashSet<string> sanitizedNames)
 		{
-			List<IInstance> instances = CreateLibraryContentsInstances(blif, edifFactory, edifConstants);
+			List<IInstance> instances = CreateLibraryContentsInstances(blif, edifFactory, edifAdditionalData);
 			List<INet> nets = CreateLibraryContentsNets(blif, edifFactory, instances, sanitizedNames);
 
 			IContents contentsResult = edifFactory.CreateContents(instances, nets);
@@ -262,21 +278,21 @@ namespace BLIFtoEDIF_Converter.Logic
 		}
 
 		private static List<IInstance> CreateLibraryContentsInstances(Blif blif, ITextViewElementsFactory edifFactory,
-			EdifConstants edifConstants)
+			EdifAdditionalData edifAdditionalData)
 		{
 			List<IInstance> result = new List<IInstance>();
 
-			List<IInstance> luts = CreateLibraryContentsInstancesLuts(blif, edifFactory, edifConstants);
+			List<IInstance> luts = CreateLibraryContentsInstancesLuts(blif, edifFactory, edifAdditionalData);
 			result.AddRange(luts);
 
-			List<IInstance> inoutbuffers = CreateLibraryContentsInstancesInOutBuffers(blif, edifFactory, edifConstants);
+			List<IInstance> inoutbuffers = CreateLibraryContentsInstancesInOutBuffers(blif, edifFactory, edifAdditionalData);
 			result.AddRange(inoutbuffers);
 
 			return result;
 		}
 
 		private static List<IInstance> CreateLibraryContentsInstancesLuts(Blif blif, ITextViewElementsFactory edifFactory, 
-			EdifConstants edifConstants)
+			EdifAdditionalData edifAdditionalData)
 		{
 			List<IInstance> result = new List<IInstance>();
 
@@ -285,17 +301,17 @@ namespace BLIFtoEDIF_Converter.Logic
 				string lutName = CreateContentsInstancesLutName(function);
 
 				string cellRefName = CreateGenericLutName(function.Ports.Length - 1);
-				ILibraryRef libraryRef = edifFactory.CreateLibraryRef(edifConstants.ExternalName);
+				ILibraryRef libraryRef = edifFactory.CreateLibraryRef(edifAdditionalData.ExternalName);
 				ICellRef cellRef = edifFactory.CreateCellRef(cellRefName, libraryRef);
-				IViewRef viewRef = edifFactory.CreateViewRef(edifConstants.GenericViewName, cellRef);
+				IViewRef viewRef = edifFactory.CreateViewRef(edifAdditionalData.GenericViewName, cellRef);
 
 				List<IProperty> properties = new List<IProperty>();
 				IProperty xstlibProperty = EdifHelper.CreateEdifProperty(edifFactory, PropertyType.XSTLIB,
-					edifConstants.PropertyOwner, true);
+					edifAdditionalData.PropertyOwner, true);
 				properties.Add(xstlibProperty);
 				InitFuncValue initFunctionValue = function.CalculateInit();
 				IProperty initProperty = EdifHelper.CreateEdifProperty(edifFactory, PropertyType.INIT,
-					edifConstants.PropertyOwner, initFunctionValue.ToString());
+					edifAdditionalData.PropertyOwner, initFunctionValue.ToString());
 				properties.Add(initProperty);
 
 				IInstance lutInstance = edifFactory.CreateInstance(lutName, viewRef, properties);
@@ -312,7 +328,7 @@ namespace BLIFtoEDIF_Converter.Logic
 		}
 
 		private static List<IInstance> CreateLibraryContentsInstancesInOutBuffers(Blif blif, ITextViewElementsFactory edifFactory,
-			EdifConstants edifConstants)
+			EdifAdditionalData edifAdditionalData)
 		{
 			List<IInstance> buffersResult = new List<IInstance>();
 
@@ -322,11 +338,11 @@ namespace BLIFtoEDIF_Converter.Logic
 				string oldNameIbuf = GetInstanceIbufName(input);
 				string renamedIbufName = CreateRenamedName(oldNameIbuf, renamedIndex++);
 
-				ILibraryRef libraryRef = edifFactory.CreateLibraryRef(edifConstants.ExternalName);
-				ICellRef cellRef = edifFactory.CreateCellRef(edifConstants.GenericIbufName, libraryRef);
-				IViewRef viewRef = edifFactory.CreateViewRef(edifConstants.GenericViewName, cellRef);
+				ILibraryRef libraryRef = edifFactory.CreateLibraryRef(edifAdditionalData.ExternalName);
+				ICellRef cellRef = edifFactory.CreateCellRef(edifAdditionalData.GenericIbufName, libraryRef);
+				IViewRef viewRef = edifFactory.CreateViewRef(edifAdditionalData.GenericViewName, cellRef);
 				IProperty xstlibProperty = EdifHelper.CreateEdifProperty(edifFactory, PropertyType.XSTLIB,
-					edifConstants.PropertyOwner, true);
+					edifAdditionalData.PropertyOwner, true);
 				IInstance ibufInstance = edifFactory.CreateInstance(oldNameIbuf, renamedIbufName, viewRef, new List<IProperty>() { xstlibProperty });
 
 				buffersResult.Add(ibufInstance);
@@ -337,11 +353,11 @@ namespace BLIFtoEDIF_Converter.Logic
 				string oldNameObuf = GetInstanceObufName(output);
 				string renamedIbufName = CreateRenamedName(oldNameObuf, renamedIndex++);
 
-				ILibraryRef libraryRef = edifFactory.CreateLibraryRef(edifConstants.ExternalName);
-				ICellRef cellRef = edifFactory.CreateCellRef(edifConstants.GenericObufName, libraryRef);
-				IViewRef viewRef = edifFactory.CreateViewRef(edifConstants.GenericViewName, cellRef);
+				ILibraryRef libraryRef = edifFactory.CreateLibraryRef(edifAdditionalData.ExternalName);
+				ICellRef cellRef = edifFactory.CreateCellRef(edifAdditionalData.GenericObufName, libraryRef);
+				IViewRef viewRef = edifFactory.CreateViewRef(edifAdditionalData.GenericViewName, cellRef);
 				IProperty xstlibProperty = EdifHelper.CreateEdifProperty(edifFactory, PropertyType.XSTLIB,
-					edifConstants.PropertyOwner, true);
+					edifAdditionalData.PropertyOwner, true);
 				IInstance obufInstance = edifFactory.CreateInstance(oldNameObuf, renamedIbufName, viewRef, new List<IProperty>() { xstlibProperty });
 
 				buffersResult.Add(obufInstance);
@@ -568,42 +584,42 @@ namespace BLIFtoEDIF_Converter.Logic
 		}
 
 		private static IInterface CreateLibraryinterface(Blif blif, ITextViewElementsFactory edifFactory,
-			EdifConstants edifConstants)
+			EdifAdditionalData edifAdditionalData)
 		{
 			List<IPort> ports = blif.Inputs.InputList.Select(input => edifFactory.CreatePort(input.Name, PortDirection.INPUT)).ToList();
 			ports.AddRange(blif.Outputs.OutputList.Select(output => edifFactory.CreatePort(output.Name, PortDirection.OUTPUT)));
 
 			List<IProperty> properties = new List<IProperty>
 			{
-				EdifHelper.CreateEdifProperty(edifFactory, PropertyType.TYPE, edifConstants.PropertyOwner, edifConstants.ModelName),
-				EdifHelper.CreateEdifProperty(edifFactory, PropertyType.KEEP_HIERARCHY, edifConstants.PropertyOwner, "TRUE"),
-				EdifHelper.CreateEdifProperty(edifFactory, PropertyType.SHREG_MIN_SIZE, edifConstants.PropertyOwner, "2"),
-				EdifHelper.CreateEdifProperty(edifFactory, PropertyType.SHREG_EXTRACT_NGC, edifConstants.PropertyOwner, "YES"),
-				EdifHelper.CreateEdifProperty(edifFactory, PropertyType.NLW_UNIQUE_ID, edifConstants.PropertyOwner, 0),
-				EdifHelper.CreateEdifProperty(edifFactory, PropertyType.NLW_MACRO_TAG, edifConstants.PropertyOwner, 0),
-				EdifHelper.CreateEdifProperty(edifFactory, PropertyType.NLW_MACRO_ALIAS, edifConstants.PropertyOwner,
-					edifConstants.ModelName + "_" + edifConstants.ModelName)
+				EdifHelper.CreateEdifProperty(edifFactory, PropertyType.TYPE, edifAdditionalData.PropertyOwner, edifAdditionalData.ModelName),
+				EdifHelper.CreateEdifProperty(edifFactory, PropertyType.KEEP_HIERARCHY, edifAdditionalData.PropertyOwner, "TRUE"),
+				EdifHelper.CreateEdifProperty(edifFactory, PropertyType.SHREG_MIN_SIZE, edifAdditionalData.PropertyOwner, "2"),
+				EdifHelper.CreateEdifProperty(edifFactory, PropertyType.SHREG_EXTRACT_NGC, edifAdditionalData.PropertyOwner, "YES"),
+				EdifHelper.CreateEdifProperty(edifFactory, PropertyType.NLW_UNIQUE_ID, edifAdditionalData.PropertyOwner, 0),
+				EdifHelper.CreateEdifProperty(edifFactory, PropertyType.NLW_MACRO_TAG, edifAdditionalData.PropertyOwner, 0),
+				EdifHelper.CreateEdifProperty(edifFactory, PropertyType.NLW_MACRO_ALIAS, edifAdditionalData.PropertyOwner,
+					edifAdditionalData.ModelName + "_" + edifAdditionalData.ModelName)
 			};
 
-			IInterface @interfaceResult = edifFactory.CreateInterface(ports, edifConstants.LibraryInterfaceDesignator, properties);
+			IInterface @interfaceResult = edifFactory.CreateInterface(ports, edifAdditionalData.LibraryInterfaceDesignator, properties);
 			return @interfaceResult;
 		}
 
 		private static IList<ICell> GetExternalGenericCells(Blif blif, ITextViewElementsFactory edifFactory,
-			EdifConstants edifConstants)
+			EdifAdditionalData edifAdditionalData)
 		{
 			IEnumerable<int> genericLutSizes = blif.Functions.Select(f => f.Ports.Length - 1).Distinct();
-			IEnumerable<ICell> genericLutCells = genericLutSizes.Select(size => CreateGenericLut(edifFactory, size, edifConstants));
+			IEnumerable<ICell> genericLutCells = genericLutSizes.Select(size => CreateGenericLut(edifFactory, size, edifAdditionalData));
 
 			IList<ICell> result = genericLutCells.ToList();
 
-			result.Add(CreateGenericInputCell(edifFactory, edifConstants));
-			result.Add(CreateGenericOutputCell(edifFactory, edifConstants));
+			result.Add(CreateGenericInputCell(edifFactory, edifAdditionalData));
+			result.Add(CreateGenericOutputCell(edifFactory, edifAdditionalData));
 			return result;
 		}
 
 		private static ICell CreateGenericLut(ITextViewElementsFactory edifFactory, int size,
-			EdifConstants edifConstants)
+			EdifAdditionalData edifAdditionalData)
 		{
 			/*(cell LUT3
       (cellType GENERIC)
@@ -636,7 +652,7 @@ namespace BLIFtoEDIF_Converter.Logic
 			IPort outputPort = edifFactory.CreatePort("O", PortDirection.OUTPUT);
 			ports.Add(outputPort);
 			IInterface inInterface = edifFactory.CreateInterface(ports, null, null);
-			IView view = edifFactory.CreateView(edifConstants.GenericViewName, ViewType.NETLIST, inInterface, null);
+			IView view = edifFactory.CreateView(edifAdditionalData.GenericViewName, ViewType.NETLIST, inInterface, null);
 			ICell resultCell = edifFactory.CreateCell(lutName, CellType.GENERIC, view);
 			return resultCell;
 		}
@@ -652,7 +668,7 @@ namespace BLIFtoEDIF_Converter.Logic
 		}
 
 		private static ICell CreateGenericOutputCell(ITextViewElementsFactory edifFactory,
-			EdifConstants edifConstants)
+			EdifAdditionalData edifAdditionalData)
 		{
 			/*(cell OBUF
       (cellType GENERIC)
@@ -671,13 +687,13 @@ namespace BLIFtoEDIF_Converter.Logic
 			IPort inputPort = edifFactory.CreatePort("I", PortDirection.INPUT);
 			IPort outputPort = edifFactory.CreatePort("O", PortDirection.OUTPUT);
 			IInterface inInterface = edifFactory.CreateInterface(new List<IPort>() { inputPort, outputPort }, null, null);
-			IView view = edifFactory.CreateView(edifConstants.GenericViewName, ViewType.NETLIST, inInterface, null);
-			ICell resultCell = edifFactory.CreateCell(edifConstants.GenericObufName, CellType.GENERIC, view);
+			IView view = edifFactory.CreateView(edifAdditionalData.GenericViewName, ViewType.NETLIST, inInterface, null);
+			ICell resultCell = edifFactory.CreateCell(edifAdditionalData.GenericObufName, CellType.GENERIC, view);
 			return resultCell;
 		}
 
 		private static ICell CreateGenericInputCell(ITextViewElementsFactory edifFactory,
-			EdifConstants edifConstants)
+			EdifAdditionalData edifAdditionalData)
 		{
 			/*(cell IBUF
       (cellType GENERIC)
@@ -696,15 +712,15 @@ namespace BLIFtoEDIF_Converter.Logic
 			IPort inputPort = edifFactory.CreatePort("I", PortDirection.INPUT);
 			IPort outputPort = edifFactory.CreatePort("O", PortDirection.OUTPUT);
 			IInterface inInterface = edifFactory.CreateInterface(new List<IPort>() {inputPort, outputPort}, null, null);
-			IView view = edifFactory.CreateView(edifConstants.GenericViewName, ViewType.NETLIST, inInterface, null);
-			ICell resultCell = edifFactory.CreateCell(edifConstants.GenericIbufName, CellType.GENERIC, view);
+			IView view = edifFactory.CreateView(edifAdditionalData.GenericViewName, ViewType.NETLIST, inInterface, null);
+			ICell resultCell = edifFactory.CreateCell(edifAdditionalData.GenericIbufName, CellType.GENERIC, view);
 			return resultCell;
 		}
 
 
-		private static string GetLibraryName(Blif blif, EdifConstants edifConstants)
+		private static string GetLibraryName(Blif blif, EdifAdditionalData edifAdditionalData)
 		{
-			return edifConstants.ModelName + "_lib";
+			return edifAdditionalData.ModelName + "_lib";
 		}
 	}
 }

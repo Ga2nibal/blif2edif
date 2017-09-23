@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Cell;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Instance;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Library;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Port;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Property;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.View;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Cell;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Instance;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Library;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Port;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Property;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.View;
+using BLIFtoEDIF_Converter.Model.Edif.Factory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PortDirection = BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Port.PortDirection;
+using PortDirection = BLIFtoEDIF_Converter.Model.Edif.Abstraction.Port.PortDirection;
 
 namespace Tests.ConvertTextViewElementsTests
 {

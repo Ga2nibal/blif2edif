@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BLIFtoEDIF_Converter.InitCalculator;
-using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
-using BLIFtoEDIF_Converter.Parser.Blif;
+using BLIFtoEDIF_Converter.Logic.InitCalculator;
+using BLIFtoEDIF_Converter.Logic.Parser.Blif;
+using BLIFtoEDIF_Converter.Model.Blif.Function;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests

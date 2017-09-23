@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BLIFtoEDIF_Converter.InitCalculator;
-using BLIFtoEDIF_Converter.Logic.Model.Blif.Function;
+using BLIFtoEDIF_Converter.Logic.InitCalculator;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests

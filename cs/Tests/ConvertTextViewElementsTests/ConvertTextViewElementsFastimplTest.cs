@@ -1,4 +1,4 @@
-﻿using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory;
+﻿using BLIFtoEDIF_Converter.Model.Edif.Factory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests.ConvertTextViewElementsTests

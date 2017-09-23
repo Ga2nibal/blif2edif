@@ -26,33 +26,42 @@ namespace BlifToEdifConverterApp.Interaction
 			InitializeComponent();
 		}
 
-		public EdifConstantsWindow(BlifToEdifModelConverter.EdifConstants edifConstants)
+		public EdifConstantsWindow(BlifToEdifModelConverter.EdifAdditionalData edifAdditionalData)
 		{
-			EdifConstants = edifConstants;
+			EdifAdditionalData = edifAdditionalData;
 			InitializeComponent();
 
-			this.ModelNameBox.Text = edifConstants.ModelName;
-			this.EdifLevelBox.Text = edifConstants.EdifLevel.ToString();
-			this.PropertyOwnerBox.Text = edifConstants.PropertyOwner;
-			this.TechnologyNameBox.Text = edifConstants.TechnologyName;
-			this.ExternalNameBox.Text = edifConstants.ExternalName;
-			//this.TimestampDateTimePicker.Value = edifConstants.StatusWrittenTimestamp;
-			this.ViewNameBox.Text = edifConstants.GenericViewName;
+			this.ModelNameBox.Text = edifAdditionalData.ModelName;
+			this.EdifLevelBox.Text = edifAdditionalData.EdifLevel.ToString();
+			this.PropertyOwnerBox.Text = edifAdditionalData.PropertyOwner;
+			this.TechnologyNameBox.Text = edifAdditionalData.TechnologyName;
+			this.ExternalNameBox.Text = edifAdditionalData.ExternalName;
+			//this.TimestampDateTimePicker.Value = EdifAdditionalData.StatusWrittenTimestamp;
+			this.ViewNameBox.Text = edifAdditionalData.GenericViewName;
+			this.DeviceComboBox.Text = edifAdditionalData.Device;
+			this.PackageComboBox.Text = edifAdditionalData.Package;
+			this.SpeedComboBox.Text = edifAdditionalData.Speed;
 		}
 
-		public BlifToEdifModelConverter.EdifConstants EdifConstants { get; }
+		public BlifToEdifModelConverter.EdifAdditionalData EdifAdditionalData { get; }
 
 		private void OkButton_OnClick(object sender, RoutedEventArgs e)
 		{
 			try
 			{
-				EdifConstants.ModelName = this.ModelNameBox.Text;
-				EdifConstants.EdifLevel = int.Parse(this.EdifLevelBox.Text);
-				EdifConstants.PropertyOwner = this.PropertyOwnerBox.Text;
-				EdifConstants.TechnologyName = this.TechnologyNameBox.Text;
-				EdifConstants.ExternalName = this.ExternalNameBox.Text;
-				EdifConstants.StatusWrittenTimestamp = this.TimestampDateTimePicker.Value ?? DateTime.Now;
-				EdifConstants.GenericViewName = this.ViewNameBox.Text;
+				EdifAdditionalData.ModelName = this.ModelNameBox.Text;
+				EdifAdditionalData.EdifLevel = int.Parse(this.EdifLevelBox.Text);
+				EdifAdditionalData.PropertyOwner = this.PropertyOwnerBox.Text;
+				EdifAdditionalData.TechnologyName = this.TechnologyNameBox.Text;
+				EdifAdditionalData.ExternalName = this.ExternalNameBox.Text;
+				EdifAdditionalData.StatusWrittenTimestamp = this.TimestampDateTimePicker.Value ?? DateTime.Now;
+				EdifAdditionalData.GenericViewName = this.ViewNameBox.Text;
+				if(!string.IsNullOrEmpty(this.DeviceComboBox.Text))
+					EdifAdditionalData.Device = this.DeviceComboBox.Text;
+				if (!string.IsNullOrEmpty(this.PackageComboBox.Text))
+					EdifAdditionalData.Package = this.PackageComboBox.Text;
+				if (!string.IsNullOrEmpty(this.SpeedComboBox.Text))
+					EdifAdditionalData.Speed = this.SpeedComboBox.Text;
 				this.DialogResult = true;
 			}
 			catch (Exception ex)

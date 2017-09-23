@@ -4,15 +4,15 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using BLIFtoEDIF_Converter.Logic;
-using BLIFtoEDIF_Converter.Logic.Model.Blif;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Cell;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Instance;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Port;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.Property;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Abstraction.View;
-using BLIFtoEDIF_Converter.Logic.Model.Edif.TextViewElements.Factory;
-using BLIFtoEDIF_Converter.Parser.Blif;
+using BLIFtoEDIF_Converter.Logic.Parser.Blif;
+using BLIFtoEDIF_Converter.Model.Blif;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Cell;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Instance;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Port;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Property;
+using BLIFtoEDIF_Converter.Model.Edif.Abstraction.View;
+using BLIFtoEDIF_Converter.Model.Edif.Factory;
 using BLIFtoEDIF_Converter.Util;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -70,9 +70,9 @@ namespace Tests
 			Blif blif = BlifParser.GetBlif(srcLines);
 
 			string renameLog;
-			BlifToEdifModelConverter.EdifConstants edifConstants = new BlifToEdifModelConverter.EdifConstants(blif.Model.Name);
+			BlifToEdifModelConverter.EdifAdditionalData edifAdditionalData = new BlifToEdifModelConverter.EdifAdditionalData(blif.Model.Name);
 			ITextViewElementsFactory factory = GetTextViewElementsFactory();
-			IEdif edif = blif.ToEdif(factory, edifConstants, out renameLog);
+			IEdif edif = blif.ToEdif(factory, edifAdditionalData, out renameLog);
 
 			Assert.IsNotNull(edif);
 
@@ -96,8 +96,8 @@ namespace Tests
 
 			ITextViewElementsFactory factory = GetTextViewElementsFactory();
 			string renameLog;
-			BlifToEdifModelConverter.EdifConstants edifConstants = new BlifToEdifModelConverter.EdifConstants(blif.Model.Name);
-			IEdif edif = blif.ToEdif(factory, edifConstants, out renameLog);
+			BlifToEdifModelConverter.EdifAdditionalData edifAdditionalData = new BlifToEdifModelConverter.EdifAdditionalData(blif.Model.Name);
+			IEdif edif = blif.ToEdif(factory, edifAdditionalData, out renameLog);
 
 			Assert.IsNotNull(edif);
 
@@ -1409,8 +1409,8 @@ namespace Tests
 			ITextViewElementsFactory factory = GetTextViewElementsFactory();
 			string renameLog;
 			string edifModelName = "adder_as_main";
-			BlifToEdifModelConverter.EdifConstants edifConstants = new BlifToEdifModelConverter.EdifConstants(edifModelName);
-			IEdif edif = blif.ToEdif(factory, edifConstants, out renameLog);
+			BlifToEdifModelConverter.EdifAdditionalData edifAdditionalData = new BlifToEdifModelConverter.EdifAdditionalData(edifModelName);
+			IEdif edif = blif.ToEdif(factory, edifAdditionalData, out renameLog);
 
 			Assert.IsNotNull(edif);
 
@@ -2713,9 +2713,9 @@ namespace Tests
 			ITextViewElementsFactory factory = GetTextViewElementsFactory();
 			string renameLog;
 			string edifModelName = "main_true_Table_schema_ver01";
-			BlifToEdifModelConverter.EdifConstants edifConstants = new BlifToEdifModelConverter.EdifConstants(edifModelName);
-			edifConstants.StatusWrittenTimestamp = new DateTime(2017, 2, 26, 22, 35, 32);
-			IEdif edif = blif.ToEdif(factory, edifConstants, out renameLog);
+			BlifToEdifModelConverter.EdifAdditionalData edifAdditionalData = new BlifToEdifModelConverter.EdifAdditionalData(edifModelName);
+			edifAdditionalData.StatusWrittenTimestamp = new DateTime(2017, 2, 26, 22, 35, 32);
+			IEdif edif = blif.ToEdif(factory, edifAdditionalData, out renameLog);
 
 			Assert.IsNotNull(edif);
 
@@ -2730,7 +2730,7 @@ namespace Tests
 			Assert.AreEqual(0, edif.KeywordMap.KeywordLevel);
 
 
-			Assert.AreEqual(edifConstants.StatusWrittenTimestamp, edif.Status.Written.Timestamp);
+			Assert.AreEqual(edifAdditionalData.StatusWrittenTimestamp, edif.Status.Written.Timestamp);
 			Assert.AreEqual(1, edif.Status.Written.Comments.Count);//TODO: is ok??
 			Assert.AreEqual("Do we need it in converter?", edif.Status.Written.Comments[0].Text);
 
@@ -3614,7 +3614,7 @@ namespace Tests
 		//	ITextViewElementsFactory factory = GetTextViewElementsFactory();
 		//	string renameLog;
 		//	string edifModelName = "main_true_Table_schema_ver01";
-		//	BlifToEdifModelConverter.EdifConstants edifConstants = new BlifToEdifModelConverter.EdifConstants(edifModelName);
+		//	BlifToEdifModelConverter.EdifAdditionalData edifConstants = new BlifToEdifModelConverter.EdifAdditionalData(edifModelName);
 		//	edifConstants.StatusWrittenTimestamp = new DateTime(2017, 2, 26, 22, 35, 32);
 		//	IEdif edif = blif.ToEdif(factory, edifConstants, out renameLog);
 
@@ -4513,8 +4513,8 @@ namespace Tests
 
 			ITextViewElementsFactory factory = GetTextViewElementsFactory();
 			string renameLog;
-			BlifToEdifModelConverter.EdifConstants edifConstants = new BlifToEdifModelConverter.EdifConstants("adder_as_main");
-			IEdif edif = blif.ToEdif(factory, edifConstants, out renameLog);
+			BlifToEdifModelConverter.EdifAdditionalData edifAdditionalData = new BlifToEdifModelConverter.EdifAdditionalData("adder_as_main");
+			IEdif edif = blif.ToEdif(factory, edifAdditionalData, out renameLog);
 			string edifSrc = edif.ToEdifText();
 			Assert.IsNotNull(edifSrc);
 			
