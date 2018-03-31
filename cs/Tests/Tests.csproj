@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="BlifToEdifConverter\BlifToEdifConverterFastImplTest.cs" />
     <Compile Include="ConvertTextViewElementsTests\ConvertTextViewElementsFastimplTest.cs" />
+    <Compile Include="EdifParderTest.cs" />
     <Compile Include="InitFunctionTest.cs" />
     <Compile Include="InitTruthMatrix.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

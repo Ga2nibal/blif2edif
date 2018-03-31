@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="Logic\InitCalculator\InitCalculator.cs" />
     <Compile Include="Logic\BlifToEdifModelConverter.cs" />
+    <Compile Include="Logic\Parser\Edif\EdifParser.cs" />
     <Compile Include="Model\Blif\Function\Function.cs" />
     <Compile Include="Logic\Parser\Blif\BlifParser.cs" />
     <Compile Include="Logic\InitCalculator\Helpers.cs" />
