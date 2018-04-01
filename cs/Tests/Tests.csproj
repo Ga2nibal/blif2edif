@@ -82,6 +82,12 @@
     <EmbeddedResource Include="DataFiles\cm82\cm82a.blif" />
     <EmbeddedResource Include="DataFiles\cm82\main_true_Table_schema_ver01.edif" />
     <EmbeddedResource Include="DataFiles\Adder7lu2\adder_7lut2.blif" />
+    <EmbeddedResource Include="DataFiles\01_Adder_12lut\adder-as1.blif" />
+    <EmbeddedResource Include="DataFiles\01_Adder_12lut\adder_as1.edif" />
+    <EmbeddedResource Include="DataFiles\01_Adder_12lut\adder_as_mainX.edif" />
+    <EmbeddedResource Include="DataFiles\02_Adder_7lut\adder_as_mod.edif" />
+    <EmbeddedResource Include="DataFiles\02_Adder_7lut\adder_as_mod_main_X.edif" />
+    <EmbeddedResource Include="DataFiles\02_Adder_7lut\blif_7lut.blif" />
     <None Include="Files\adder-as.blif" />
     <None Include="Files\cm82a.blif" />
     <None Include="Files\Diploma-Tasks-rel02-1-data.blif" />
