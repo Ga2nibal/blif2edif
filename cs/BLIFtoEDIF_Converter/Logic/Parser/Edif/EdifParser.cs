@@ -17,7 +17,9 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 {
 	public class EdifParser
 	{
-		public static IEdif GetEdif(string edifSource)
+		internal Dictionary<string, string> RenameDictionary { get; } = new Dictionary<string, string>();
+
+		public IEdif GetEdif(string edifSource)
 		{
 			if (null == edifSource)
 				throw new ArgumentNullException(nameof(edifSource), $"{nameof(edifSource)} is not defined");
@@ -35,13 +37,13 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			IExternal external = GetExternal(edifSource, edifFactory);
 
 			ILibrary library = GetOneLinraryOrThrow(edifSource, edifFactory);
-			IDesign design = GetDesign(edifSource, edifFactory);
+			IDesign design = GetDesign(GetBlockBodies(edifSource, @"\(\s*design\s+([\w\d]+)[\W\D]")[0], edifFactory);
 
 			return edifFactory.CreateEdif(name, edifVersion, edifLevel, keywordApp, status, external,
 				library, design);
 		}
 
-		private static ILibrary GetOneLinraryOrThrow(string edifSource, ITextViewElementsFactory edifFactory)
+		private ILibrary GetOneLinraryOrThrow(string edifSource, ITextViewElementsFactory edifFactory)
 		{
 			var libraryBodies = GetBlockBodies(edifSource, @"\(\s*library\s+");
 			if (libraryBodies == null || libraryBodies.Count == 0)
@@ -52,43 +54,37 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 				throw new ArgumentException($"Edif Parser found {libraryBodies.Count} matches of 'Library' block in edifSource");
 		}
 
-		private static IDesign GetDesign(string designSource, ITextViewElementsFactory edifFactory)
+		private IDesign GetDesign(string designSource, ITextViewElementsFactory edifFactory)
 		{
-			var matches = Regex.Matches(designSource, @"\(\s*design\s+([\w\d]+)[\W\D]+(.*)");
-			if (matches.Count != 1)
-				throw new ArgumentException($"Edif Parser found {matches.Count} matches of 'design names' in designSource");
-			string name = matches[0].Groups[1].Value;
+			string name = GetNameAsFirstGroup(designSource, @"\(\s*design\s+([\w\d]+)[\W\D]");
 			IList<ICellRef> cellRefs = GetCellRefs(designSource, edifFactory);
 			IList<IProperty> properties = GetProperties(designSource, edifFactory);
 			return edifFactory.CreateDesign(name, cellRefs, properties);
 		}
 
-		private static ILibrary GetLibrary(string librarySource, ITextViewElementsFactory edifFactory)
+		private ILibrary GetLibrary(string librarySource, ITextViewElementsFactory edifFactory)
 		{
-			var matches = Regex.Matches(librarySource, @"\(\s*library\s+([\w\d]+)[\W\D]+");
-			if (matches.Count != 1)
-				throw new ArgumentException($"Edif Parser found {matches.Count} matches of 'Library name' in librarySource");
-			string name = matches[0].Groups[1].Value;
+			string name = GetNameAsFirstGroup(librarySource, @"\(\s*library\s+([\w\d]+)[\W\D]+");
 			ICell cell = GetMaxOneCellOrThrow(librarySource, edifFactory);
 			IEdifLevel edifLevel = GetEdifLevel(librarySource, edifFactory);
 			ITechnology technology = GetTechnology(librarySource, edifFactory);
 			return edifFactory.CreateLibrary(name, edifLevel, technology, cell);
 		}
 
-		private static IExternal GetExternal(string edifSource, ITextViewElementsFactory edifFactory)
+		private IExternal GetExternal(string edifSource, ITextViewElementsFactory edifFactory)
 		{
-			var matches = Regex.Matches(edifSource, @"\(\s*external\s+([\w\d]+)[\W\D]+(.*)");
-			if (matches.Count != 1)
-				throw new ArgumentException($"Edif Parser found {matches.Count} matches of edif External block");
-			string name = matches[0].Groups[1].Value;
-			string externalBody = GetSourceToEndOfBodyBlock(matches[0].Groups[2].Value);
+			List<string> externalBodies = GetBlockBodies(edifSource, @"\(\s*external\s+([\w\d]+)[\W\D]+(.*)");
+			if (externalBodies.Count != 1)
+				throw new ArgumentException($"Edif Parser found {externalBodies.Count} matches of edif External block");
+			string externalBody = externalBodies[0];
+			string name = GetNameAsFirstGroup(externalBody, @"\(\s*external\s+([\w\d]+)[\W\D]+(.*)");
 			IEdifLevel edifLevel = GetEdifLevel(externalBody, edifFactory);
 			ITechnology technology = GetTechnology(externalBody, edifFactory);
 			IList<ICell> cells = GetCells(externalBody, edifFactory);
 			return edifFactory.CreateExternal(name, edifLevel, technology, cells);
 		}
 
-		private static ICell GetMaxOneCellOrThrow(string body, ITextViewElementsFactory edifFactory)
+		private ICell GetMaxOneCellOrThrow(string body, ITextViewElementsFactory edifFactory)
 		{
 			List<string> cellSources = GetBlockBodies(body, @"\(\s*cell\s+([\w\d]+)[\W\D]+");
 			if (cellSources == null || cellSources.Count == 0)
@@ -98,27 +94,27 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			throw new ArgumentException($"Edif Parser found {cellSources.Count} matches of cells in body");
 		}
 
-		private static IList<IProperty> GetProperties(string body, ITextViewElementsFactory edifFactory)
+		private IList<IProperty> GetProperties(string body, ITextViewElementsFactory edifFactory)
 		{
-			List<string> cellSources = GetBlockBodies(body, @"\(\s*property\s+([\w\d]+)[\W\D]+");
+			List<string> cellSources = GetBlockBodies(body, @"\(\s*property\s+([\w\d]+)[\W\D]");
 			return cellSources.Select(s => GetProperty(s, edifFactory)).ToList();
 		}
 
-		private static IList<ICellRef> GetCellRefs(string body, ITextViewElementsFactory edifFactory)
+		private IList<ICellRef> GetCellRefs(string body, ITextViewElementsFactory edifFactory)
 		{
 			List<string> cellSources = GetBlockBodies(body, @"\(\s*cellRef\s+([\w\d]+)[\W\D]+");
 			return cellSources.Select(s => GetCellRef(s, edifFactory)).ToList();
 		}
 
-		private static IList<ICell> GetCells(string body, ITextViewElementsFactory edifFactory)
+		private IList<ICell> GetCells(string body, ITextViewElementsFactory edifFactory)
 		{
 			List<string> cellSources = GetBlockBodies(body, @"\(\s*cell\s+([\w\d]+)[\W\D]+");
 			return cellSources.Select(s => GetCell(s, edifFactory)).ToList();
 		}
 
-		private static ICell GetCell(string cellBody, ITextViewElementsFactory edifFactory)
+		private ICell GetCell(string cellBody, ITextViewElementsFactory edifFactory)
 		{
-			string name = Regex.Matches(cellBody, @"\(\s*cell\s+([\w\d]+)[\W\D]+")[0].Groups[1].Value;
+			string name = GetNameAsFirstGroup(cellBody, @"\(\s*cell\s+([\w\d]+)[\W\D]+");
 			CellType cellType = (CellType)Enum.Parse(typeof(CellType),
 				Regex.Matches(cellBody, @"\(\s*cellType\s+([\w\d]+)[\W\D]+")[0].Groups[1].Value,
 				true);
@@ -129,26 +125,35 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return edifFactory.CreateCell(name, cellType, view);
 		}
 
-		private static IView GetView(string viewBody, ITextViewElementsFactory edifFactory)
+		private IView GetView(string viewBody, ITextViewElementsFactory edifFactory)
 		{
-			string name = Regex.Matches(viewBody, @"\(\s*view\s+([\w\d]+)[\W\D]+")[0].Groups[1].Value;
+			string name = GetNameAsFirstGroup(viewBody, @"\(\s*view\s+([\w\d]+)[\W\D]+");
 			ViewType cellType = (ViewType)Enum.Parse(typeof(ViewType),
 				Regex.Matches(viewBody, @"\(\s*viewType\s+([\w\d]+)[\W\D]+")[0].Groups[1].Value,
 				true);
 			var interfaceBodies = GetBlockBodies(viewBody, @"\(\s*interface[\W\D]+");
-			if (interfaceBodies.Count != 1)
+			IInterface edifInterface;
+			if (interfaceBodies.Count == 0)
+				edifInterface = null;
+			else if (interfaceBodies.Count == 1)
+				edifInterface = GetInterface(interfaceBodies[0], edifFactory);
+			else
 				throw new ArgumentException($"Edif Parser found {interfaceBodies.Count} matches of interface in viewBody block");
-			IInterface edifInterface = GetInterface(interfaceBodies[0], edifFactory);
+
 			var contentsBodies = GetBlockBodies(viewBody, @"\(\s*contents[\W\D]+");
-			if (contentsBodies.Count != 1)
+			IContents contents;
+			if (contentsBodies.Count == 0)
+				contents = null;
+			else if (contentsBodies.Count == 1)
+				contents = GetContent(contentsBodies[0], edifFactory);
+			else
 				throw new ArgumentException($"Edif Parser found {contentsBodies.Count} matches of content in viewBody block");
-			IContents contents = GetContent(contentsBodies[0], edifFactory);
 			return edifFactory.CreateView(name, cellType, edifInterface, contents);
 		}
 
-		private static IContents GetContent(string contentsBody, ITextViewElementsFactory edifFactory)
+		private IContents GetContent(string contentsBody, ITextViewElementsFactory edifFactory)
 		{
-			List<string> instancesSources = GetBlockBodies(contentsBody, @"\(\s*instance\s+([\w\d]+)[\W\D]+");
+			List<string> instancesSources = GetBlockBodies(contentsBody, @"\(\s*instance\s+");
 			IList<IInstance> instances = instancesSources.Select(s => GetInstance(s, edifFactory)).ToList();
 
 			List<string> netsSources = GetBlockBodies(contentsBody, @"\(\s*net\s+([\w\d]+)[\W\D]+");
@@ -157,9 +162,9 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return edifFactory.CreateContents(instances, nets);
 		}
 
-		private static INet GetNet(string netsSource, ITextViewElementsFactory edifFactory)
+		private INet GetNet(string netsSource, ITextViewElementsFactory edifFactory)
 		{
-			string name = Regex.Matches(netsSource, @"\(\s*net\s+([\w\d]+)[\W\D]+")[0].Groups[1].Value;
+			string name = GetNameAsFirstGroup(netsSource, @"\(\s*net\s+([\w\d]+)[\W\D]+");
 			IList<IPortRef> joinedPortRef;
 			List<string> joinedBlock = GetBlockBodies(netsSource, @"\(\s*joined\W");
 			if (joinedBlock.Count == 0)
@@ -169,7 +174,7 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			}
 			else if (joinedBlock.Count == 1)
 			{
-				List<string> portRefSources = GetBlockBodies(joinedBlock[0], @"\(\s*portRef\s+([\w\d]+)[\W\D]+");
+				List<string> portRefSources = GetBlockBodies(joinedBlock[0], @"\(\s*portRef\s+([\w\d]+)[\W\D]");
 				joinedPortRef = portRefSources.Select(portRefSource => GetPortRef(portRefSource, edifFactory)).ToList();
 			}
 			else
@@ -178,9 +183,9 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return edifFactory.CreateNet(name, joinedPortRef);
 		}
 
-		private static IPortRef GetPortRef(string portRefSource, ITextViewElementsFactory edifFactory)
+		private IPortRef GetPortRef(string portRefSource, ITextViewElementsFactory edifFactory)
 		{
-			string name = Regex.Matches(portRefSource, @"\(\s*portRef\s+([\w\d]+)[\W\D]+")[0].Groups[1].Value;
+			string name = GetNameAsFirstGroup(portRefSource, @"\(\s*portRef\s+([\w\d]+)[\W\D]");
 			List<IInstanceRef> instanceRefs = GetInstanceRefs(portRefSource, edifFactory);
 			IInstanceRef instanceRef;
 			if (instanceRefs == null || instanceRefs.Count == 0)
@@ -192,33 +197,33 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return edifFactory.CreatePortRef(name, instanceRef);
 		}
 
-		private static List<IInstanceRef> GetInstanceRefs(string source, ITextViewElementsFactory edifFactory)
+		private List<IInstanceRef> GetInstanceRefs(string source, ITextViewElementsFactory edifFactory)
 		{
 			List<string> instanceRefSources = GetBlockBodies(source, @"\(\s*instanceRef\W");
 			List<IInstanceRef> result = instanceRefSources.Select(instanceRefSource => GetInstanceRef(instanceRefSource, edifFactory)).ToList();
 			return result;
 		}
 
-		private static IInstanceRef GetInstanceRef(string instanceRefSource, ITextViewElementsFactory edifFactory)
+		private IInstanceRef GetInstanceRef(string instanceRefSource, ITextViewElementsFactory edifFactory)
 		{
-			string referedInstanceName = Regex.Matches(instanceRefSource, @"\(\s*instanceRef\s+([\w\d]+)[\W\D]+")[0].Groups[1].Value;
+			string referedInstanceName = GetNameAsFirstGroup(instanceRefSource, @"\(\s*instanceRef\s+([\w\d]+)[\W\D]+");
 			return edifFactory.CreateInstanceRef(referedInstanceName);
 		}
 
-		private static IInstance GetInstance(string instanceBody, ITextViewElementsFactory edifFactory)
+		private IInstance GetInstance(string instanceBody, ITextViewElementsFactory edifFactory)
 		{
 			string name;
 			string renamedSynonym;
 			var renameMatch = Regex.Matches(instanceBody, @"\(\s*rename\s+([\w\d]+)[\W\D]+""([\w\d]+)""\s*\)");
 			if (renameMatch.Count == 0)
 			{
-				name = Regex.Matches(instanceBody, @"\(\s*instance\s+([\w\d]+)[\W\D]+")[0].Groups[1].Value;
+				name = GetNameAsFirstGroup(instanceBody, @"\(\s*instance\s+([\w\d]+)[\W\D]+");
 				renamedSynonym = null;
 			}
 			else if(renameMatch.Count == 1)
 			{
-				name = renameMatch[0].Groups[2].Value;
-				renamedSynonym = renameMatch[0].Groups[1].Value;
+				name = GetElementName(renameMatch[0].Groups[2].Value);
+				renamedSynonym = GetElementName(renameMatch[0].Groups[1].Value);
 			}
 			else
 				throw new ArgumentException($"Edif Parser found {renameMatch.Count} matches of rename block in instanceBody");
@@ -236,9 +241,9 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return edifFactory.CreateInstance(name, renamedSynonym, viewRef, properties);
 		}
 
-		private static IViewRef GetViewRef(string viewRefSource, ITextViewElementsFactory edifFactory)
+		private IViewRef GetViewRef(string viewRefSource, ITextViewElementsFactory edifFactory)
 		{
-			string name = Regex.Matches(viewRefSource, @"\(\s*viewRef\s+([\w\d]+)[\W\D]+")[0].Groups[1].Value;
+			string name = GetNameAsFirstGroup(viewRefSource, @"\(\s*viewRef\s+([\w\d]+)[\W\D]+");
 			ICellRef cellRef;
 			List<string> cellRefSources = GetBlockBodies(viewRefSource, @"\(\s*cellRef\s+([\w\d]+)[\W\D]+");
 			if (cellRefSources.Count == 0)
@@ -250,9 +255,9 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return edifFactory.CreateViewRef(name, cellRef);
 		}
 
-		private static ICellRef GetCellRef(string cellRefSource, ITextViewElementsFactory edifFactory)
+		private ICellRef GetCellRef(string cellRefSource, ITextViewElementsFactory edifFactory)
 		{
-			string name = Regex.Matches(cellRefSource, @"\(\s*cellRef\s+([\w\d]+)[\W\D]+")[0].Groups[1].Value;
+			string name = GetNameAsFirstGroup(cellRefSource, @"\(\s*cellRef\s+([\w\d]+)[\W\D]+");
 			ILibraryRef libraryRef;
 			List<string> libraryRefSources = GetBlockBodies(cellRefSource, @"\(\s*libraryRef\s+([\w\d]+)[\W\D]+");
 			if (libraryRefSources.Count == 0)
@@ -264,22 +269,22 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return edifFactory.CreateCellRef(name, libraryRef);
 		}
 
-		private static ILibraryRef GetLibraryRef(string libraryRefSource, ITextViewElementsFactory edifFactory)
+		private ILibraryRef GetLibraryRef(string libraryRefSource, ITextViewElementsFactory edifFactory)
 		{
-			string name = Regex.Matches(libraryRefSource, @"\(\s*libraryRef\s+([\w\d]+)[\W\D]+")[0].Groups[1].Value;
+			string name = GetNameAsFirstGroup(libraryRefSource, @"\(\s*libraryRef\s+([\w\d]+)[\W\D]+");
 			return edifFactory.CreateLibraryRef(name);
 		}
 
-		private static IInterface GetInterface(string interfaceBody, ITextViewElementsFactory edifFactory)
+		private IInterface GetInterface(string interfaceBody, ITextViewElementsFactory edifFactory)
 		{
-			List<string> portSources = GetBlockBodies(interfaceBody, @"\(\s*port\s+([\w\d]+)[\W\D]+");
+			List<string> portSources = GetBlockBodies(interfaceBody, @"\(\s*port\s+([\w\d]+)[\W\D]");
 			var ports = portSources.Select(s => GetPort(s, edifFactory)).ToList();
 			string designator = GetDesignator(interfaceBody);
 			IList<IProperty> properties = GetProperties(interfaceBody, edifFactory);
 			return edifFactory.CreateInterface(ports, designator, properties);
 		}
 
-		private static IProperty GetProperty(string propertyBody, ITextViewElementsFactory edifFactory)
+		private IProperty GetProperty(string propertyBody, ITextViewElementsFactory edifFactory)
 		{
 			PropertyType propertyType = GetPropertyType(propertyBody);
 			IPropertyValue propertyValue = GetPropertyValue(propertyBody, edifFactory);
@@ -287,7 +292,7 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return edifFactory.CreateProperty(propertyType, propertyValue, owner);
 		}
 
-		private static IPropertyValue GetPropertyValue(string propertyBody, ITextViewElementsFactory edifFactory)
+		private IPropertyValue GetPropertyValue(string propertyBody, ITextViewElementsFactory edifFactory)
 		{
 			var matches = Regex.Matches(propertyBody, @"\(\s*property\s+[\w\d]+\s*\(([^\)]+)\)");
 			if (matches.Count == 0)
@@ -299,18 +304,25 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			var typeValue = matches[0].Groups[1].Value.Split(' ');
 			if(typeValue.Length != 2)
 				throw new ArgumentException($"GetPropertyValue. typeValue.Length : {typeValue.Length}, but '2' expected. propertyBody: {propertyBody}. typeValueMatch: {matches[0].Groups[1].Value}");
-			return edifFactory.CreatePropertyValue(typeValue[1],
-				(PropertyValueType)Enum.Parse(typeof(PropertyValueType), typeValue[0], true));
+			object propValue = typeValue[1];
+			PropertyValueType propertyValueType = (PropertyValueType) Enum.Parse(typeof(PropertyValueType), typeValue[0], true);
+			if (propertyValueType == PropertyValueType.String)
+				propValue = typeValue[1].Trim('"');
+			else if (propertyValueType == PropertyValueType.Integer)
+				propValue = int.Parse(typeValue[1]);
+			else if (propertyValueType == PropertyValueType.Boolean)
+				propValue = bool.Parse(typeValue[1].Trim('(').Trim(')'));
+			return edifFactory.CreatePropertyValue(propValue, propertyValueType);
 		}
 
-		private static PropertyType GetPropertyType(string propertyBody)
+		private PropertyType GetPropertyType(string propertyBody)
 		{
 			return (PropertyType)Enum.Parse(typeof(PropertyType),
 				Regex.Matches(propertyBody, @"\(\s*property\s+([\w\d]+)[\W\D]+")[0].Groups[1].Value,
 				true);
 		}
 
-		private static string GetPropertyOwner(string propertyBody)
+		private string GetPropertyOwner(string propertyBody)
 		{
 			var matches = Regex.Matches(propertyBody, @"\(\s*owner\s+""([\w\d]+)""\s*\)");
 			if (matches.Count == 0)
@@ -320,23 +332,23 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return matches[0].Groups[1].Value;
 		}
 
-		private static IPort GetPort(string portBody, ITextViewElementsFactory edifFactory)
+		private IPort GetPort(string portBody, ITextViewElementsFactory edifFactory)
 		{
-			string name = Regex.Matches(portBody, @"\(\s*port\s+([\w\d]+)[\W\D]+")[0].Groups[1].Value;
+			string name = GetNameAsFirstGroup(portBody, @"\(\s*port\s+([\w\d]+)[\W\D]+");
 			PortDirection direction = GetPortDirection(portBody);
 			return edifFactory.CreatePort(name, direction);
 		}
 
-		private static PortDirection GetPortDirection(string portBody)
+		private PortDirection GetPortDirection(string portBody)
 		{
 			return (PortDirection)Enum.Parse(typeof(PortDirection),
 				Regex.Matches(portBody, @"\(\s*direction\s+([\w\d]+)[\W\D]+")[0].Groups[1].Value,
 				true);
 		}
 
-		private static string GetDesignator(string interfaceBody)
+		private string GetDesignator(string interfaceBody)
 		{
-			var matches = Regex.Matches(interfaceBody, @"\(\s*designator\s+([\d\w""]+)[\W\D]*\)");
+			var matches = Regex.Matches(interfaceBody, @"\(\s*designator\s+""([^""]+)""[\W\D]*\)");
 			if (matches.Count == 0)
 				return null;
 			if (matches.Count != 1)
@@ -345,7 +357,7 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return match.Groups[1].Value;
 		}
 
-		private static List<string> GetBlockBodies(string source, string pattern)
+		private List<string> GetBlockBodies(string source, string pattern)
 		{
 			var cellMatches = Regex.Matches(source, pattern);
 			List<string> blockSources = new List<string>();
@@ -354,7 +366,7 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return blockSources;
 		}
 
-		private static ITechnology GetTechnology(string edifSource, ITextViewElementsFactory edifFactory)
+		private ITechnology GetTechnology(string edifSource, ITextViewElementsFactory edifFactory)
 		{
 			var matches = Regex.Matches(edifSource, @"\(\s*technology\s+\(*\s*([\w\d]+)\s*\)*\)");
 			if (matches.Count == 0)
@@ -365,26 +377,7 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return edifFactory.CreateTechnology(match.Groups[1].Value);
 		}
 
-		private static string GetSourceToEndOfBodyBlock(string edifSourceFromStartExternalBody)
-		{
-			StringBuilder result = new StringBuilder();
-			int externalNesting = 1;
-			foreach (char sourceChar in edifSourceFromStartExternalBody)
-			{
-				if (sourceChar == '(')
-					externalNesting++;
-				else if (sourceChar == ')')
-					externalNesting--;
-				if (externalNesting == 0)
-					break;
-				result.Append(sourceChar);
-			}
-			if (externalNesting != 0)
-				throw new ArgumentException("Can not find end of Block.");
-			return result.ToString();
-		}
-
-		private static string GetBlockSource(string source, int startBlockIndex, int? maxNestingLevelInResult = null)
+		private string GetBlockSource(string source, int startBlockIndex, int? maxNestingLevelInResult = null)
 		{
 			if(source[startBlockIndex] != '(')
 				throw new ArgumentException($"source[startBlockIndex] should be '(', but {source[startBlockIndex]}. startBlockIndex: {startBlockIndex}. source: {source}");
@@ -409,7 +402,7 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return result.ToString();
 		}
 
-		private static IStatus GetStatus(string edifSource, ITextViewElementsFactory edifFactory)
+		private IStatus GetStatus(string edifSource, ITextViewElementsFactory edifFactory)
 		{
 			return null;
 			//TODO: Implement me
@@ -420,7 +413,7 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			//return edifFactory.CreateStatus(int.Parse(match.Groups[1].Value));
 		}
 
-		private static IWritten GetWritten(string edifSource, ITextViewElementsFactory edifFactory)
+		private IWritten GetWritten(string edifSource, ITextViewElementsFactory edifFactory)
 		{
 			return null;
 			//TODO: Implement me
@@ -431,7 +424,7 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			//return edifFactory.CreateWritten(int.Parse(match.Groups[1].Value));
 		}
 
-		private static IKeywordMap GetKeywordMap(string edifSource, ITextViewElementsFactory edifFactory)
+		private IKeywordMap GetKeywordMap(string edifSource, ITextViewElementsFactory edifFactory)
 		{
 			var matches = Regex.Matches(edifSource, @"\(\s*keywordMap[\W\D]*\(\s*keywordLevel\s+(\d+)[\W\D]*\)[\W\D]*\)");
 			if (matches.Count != 1)
@@ -440,7 +433,7 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return edifFactory.CreateKeywordMap(int.Parse(match.Groups[1].Value));
 		}
 
-		private static IEdifLevel GetEdifLevel(string body, ITextViewElementsFactory edifFactory)
+		private IEdifLevel GetEdifLevel(string body, ITextViewElementsFactory edifFactory)
 		{
 			var matches = Regex.Matches(body, @"\(\s*edifLevel\s+(\d+)[\W\D]*\)");
 			if (matches.Count == 0)
@@ -451,7 +444,7 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			return edifFactory.CreateEdifLevel(int.Parse(match.Groups[1].Value));
 		}
 
-		private static IEdifVersion GetEdifVesrion(string edifSource, ITextViewElementsFactory edifFactory)
+		private IEdifVersion GetEdifVesrion(string edifSource, ITextViewElementsFactory edifFactory)
 		{
 			var matches = Regex.Matches(edifSource, @"\(\s*edifVersion\s+(\d+)\s+(\d+)\s+(\d+)[\W\D]*\)");
 			if (matches.Count != 1)
@@ -461,12 +454,28 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 				int.Parse(match.Groups[2].Value), int.Parse(match.Groups[3].Value));
 		}
 
-		public static string GetEdifName(string edifSource)
+		public string GetEdifName(string edifSource)
 		{
 			var matches = Regex.Matches(edifSource, @"edif\s+([\w\d]+)[\W\D]");
 			if(matches.Count != 1)
 				throw new ArgumentException($"Edif Parser found {matches.Count} edif names");
 			return matches[0].Groups[1].Value;
+		}
+
+		private string GetNameAsFirstGroup(string body, string pattern)
+		{
+			MatchCollection matches=  Regex.Matches(body, pattern);
+			if (matches.Count != 1)
+				throw new ArgumentException($"Edif Parser found {matches.Count} matches of 'name' in body");
+			return GetElementName(matches[0].Groups[1].Value);
+		}
+
+		private string GetElementName(string value)
+		{
+			string renamed;
+			if (RenameDictionary.TryGetValue(value, out renamed))
+				return renamed;
+			return value;
 		}
 	}
 }
