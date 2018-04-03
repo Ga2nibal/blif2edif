@@ -7,7 +7,7 @@ using BLIFtoEDIF_Converter.Model.Edif.Abstraction.View;
 
 namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl.Instance
 {
-	class Instance : IInstance
+	class Instance : IInstance, IEquatable<Instance>
 	{
 		public Instance(string name, IViewRef viewRef, IList<IProperty> properties)
 		{
@@ -25,7 +25,7 @@ namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl.Instance
 			Name = name;
 			RenamedSynonym = renamedSynonym;
 			ViewRef = viewRef;
-			Properties = properties;
+			Properties = properties ?? new List<IProperty>(0);
 		}
 
 		#region [IInstance implementation]
@@ -53,5 +53,46 @@ namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl.Instance
 		}
 
 		#endregion  [IInstance implementation]
+
+		#region [Equality]
+
+		public bool Equals(Instance other)
+		{
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return string.Equals(Name, other.Name) && string.Equals(RenamedSynonym, other.RenamedSynonym) && Equals(ViewRef, other.ViewRef) && Properties.SequenceEqual(other.Properties);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != this.GetType()) return false;
+			return Equals((Instance) obj);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				var hashCode = (Name != null ? Name.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (RenamedSynonym != null ? RenamedSynonym.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (ViewRef != null ? ViewRef.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (Properties != null ? Properties.GetHashCode() : 0);
+				return hashCode;
+			}
+		}
+
+		public static bool operator ==(Instance left, Instance right)
+		{
+			return Equals(left, right);
+		}
+
+		public static bool operator !=(Instance left, Instance right)
+		{
+			return !Equals(left, right);
+		}
+
+		#endregion [Equality]
 	}
 }

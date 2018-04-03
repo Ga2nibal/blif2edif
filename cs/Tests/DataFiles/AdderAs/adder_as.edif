@@ -5,7 +5,7 @@
   (status
     (written
       (timestamp 2017 6 5 10 47 40)
-      (comment "Do we need it in converter?")
+      (comment "Do we need it in converter?")))
   (external UNISIMS
     (edifLevel 0)
     (technology (numberDefinition))

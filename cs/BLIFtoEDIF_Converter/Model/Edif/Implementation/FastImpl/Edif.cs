@@ -5,7 +5,7 @@ using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Library;
 
 namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl
 {
-	class Edif : IEdif
+	class Edif : IEdif, IEquatable<Edif>
 	{
 		public Edif(string name, IEdifVersion version, IEdifLevel level, IKeywordMap keywordMap, IStatus status, IExternal external, ILibrary library, IDesign design)
 		{
@@ -58,5 +58,52 @@ namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl
 		}
 
 		#endregion [IEdif implmentaion]
+
+		#region [Equality]
+
+		public bool Equals(Edif other)
+		{
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return string.Equals(Name, other.Name) && Equals(Version, other.Version) && Equals(Level, other.Level) &&
+					Equals(KeywordMap, other.KeywordMap) && Equals(Status, other.Status) && Equals(External, other.External) &&
+					Equals(Library, other.Library) && Equals(Design, other.Design);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != this.GetType()) return false;
+			return Equals((Edif) obj);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				var hashCode = (Name != null ? Name.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (Version != null ? Version.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (Level != null ? Level.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (KeywordMap != null ? KeywordMap.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (Status != null ? Status.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (External != null ? External.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (Library != null ? Library.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (Design != null ? Design.GetHashCode() : 0);
+				return hashCode;
+			}
+		}
+
+		public static bool operator ==(Edif left, Edif right)
+		{
+			return Equals(left, right);
+		}
+
+		public static bool operator !=(Edif left, Edif right)
+		{
+			return !Equals(left, right);
+		}
+
+		#endregion [Equality]
 	}
 }

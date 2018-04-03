@@ -5,7 +5,7 @@ using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Port;
 
 namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl.Port
 {
-	class PortRef : IPortRef
+	class PortRef : IPortRef, IEquatable<PortRef>
 	{
 		public PortRef(string name, IInstanceRef instanceRef)
 		{
@@ -40,5 +40,47 @@ namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl.Port
 		}
 
 		#endregion [IPortRef implementation]
+
+		public override string ToString()
+		{
+			return $"Edif PortRef. Name: {Name}, InstanceRef: {InstanceRef}";
+		}
+
+		#region [Equality]
+
+		public bool Equals(PortRef other)
+		{
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return string.Equals(Name, other.Name, StringComparison.InvariantCulture) && Equals(InstanceRef, other.InstanceRef);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != this.GetType()) return false;
+			return Equals((PortRef) obj);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				return ((Name != null ? Name.GetHashCode() : 0) * 397) ^ (InstanceRef != null ? InstanceRef.GetHashCode() : 0);
+			}
+		}
+
+		public static bool operator ==(PortRef left, PortRef right)
+		{
+			return Equals(left, right);
+		}
+
+		public static bool operator !=(PortRef left, PortRef right)
+		{
+			return !Equals(left, right);
+		}
+
+		#endregion [Equality]
 	}
 }

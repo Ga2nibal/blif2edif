@@ -7,7 +7,7 @@ using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Cell;
 
 namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl
 {
-	class External : IExternal
+	class External : IExternal, IEquatable<External>
 	{
 		public External(string name, IEdifLevel edifLevel, ITechnology technology, IList<ICell> cells)
 		{
@@ -16,7 +16,7 @@ namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl
 			Name = name;
 			EdifLevel = edifLevel;
 			Technology = technology;
-			Cells = cells;
+			Cells = cells ?? new List<ICell>(0);
 		}
 
 		#region [IExternal implementation]
@@ -42,5 +42,46 @@ namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl
 		}
 
 		#endregion [IExternal implementation]
+
+		#region [Equality]
+
+		public bool Equals(External other)
+		{
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return string.Equals(Name, other.Name) && Equals(EdifLevel, other.EdifLevel) && Equals(Technology, other.Technology) && Cells.SequenceEqual(other.Cells);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != this.GetType()) return false;
+			return Equals((External) obj);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				var hashCode = (Name != null ? Name.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (EdifLevel != null ? EdifLevel.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (Technology != null ? Technology.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (Cells != null ? Cells.GetHashCode() : 0);
+				return hashCode;
+			}
+		}
+
+		public static bool operator ==(External left, External right)
+		{
+			return Equals(left, right);
+		}
+
+		public static bool operator !=(External left, External right)
+		{
+			return !Equals(left, right);
+		}
+
+		#endregion [Equality]
 	}
 }

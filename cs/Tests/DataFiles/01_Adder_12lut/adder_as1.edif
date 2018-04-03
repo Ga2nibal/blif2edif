@@ -1,4 +1,4 @@
-(edif adder_as1 
+(edif adder_as_main 
 	(edifVersion 2 0 0) 
 	(edifLevel 0) 
 	(keywordMap 

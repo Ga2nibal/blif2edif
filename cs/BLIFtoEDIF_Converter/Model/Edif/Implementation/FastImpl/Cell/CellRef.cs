@@ -4,7 +4,7 @@ using BLIFtoEDIF_Converter.Model.Edif.Abstraction.Library;
 
 namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl.Cell
 {
-	class CellRef : ICellRef
+	class CellRef : ICellRef, IEquatable<CellRef>
 	{
 		public CellRef(string name, ILibraryRef libraryRef)
 		{
@@ -27,5 +27,42 @@ namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl.Cell
 		}
 
 		#endregion [ICellRef implementation]
+
+		#region [Equality]
+
+		public bool Equals(CellRef other)
+		{
+			if (ReferenceEquals(null, other)) return false;
+			if (ReferenceEquals(this, other)) return true;
+			return string.Equals(Name, other.Name) && Equals(LibraryRef, other.LibraryRef);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			if (ReferenceEquals(this, obj)) return true;
+			if (obj.GetType() != this.GetType()) return false;
+			return Equals((CellRef) obj);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				return ((Name != null ? Name.GetHashCode() : 0) * 397) ^ (LibraryRef != null ? LibraryRef.GetHashCode() : 0);
+			}
+		}
+
+		public static bool operator ==(CellRef left, CellRef right)
+		{
+			return Equals(left, right);
+		}
+
+		public static bool operator !=(CellRef left, CellRef right)
+		{
+			return !Equals(left, right);
+		}
+
+		#endregion [Equality]
 	}
 }

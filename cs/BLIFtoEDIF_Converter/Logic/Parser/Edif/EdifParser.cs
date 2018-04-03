@@ -307,7 +307,7 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Edif
 			object propValue = typeValue[1];
 			PropertyValueType propertyValueType = (PropertyValueType) Enum.Parse(typeof(PropertyValueType), typeValue[0], true);
 			if (propertyValueType == PropertyValueType.String)
-				propValue = typeValue[1].Trim('"');
+				propValue = GetElementName(typeValue[1].Trim('"'));
 			else if (propertyValueType == PropertyValueType.Integer)
 				propValue = int.Parse(typeValue[1]);
 			else if (propertyValueType == PropertyValueType.Boolean)
