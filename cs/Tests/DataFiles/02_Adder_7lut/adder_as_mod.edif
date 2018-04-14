@@ -1,4 +1,4 @@
-(edif adder_as_mod 
+(edif adder_as_mod_main 
 	(edifVersion 2 0 0) 
 	(edifLevel 0) 
 	(keywordMap 

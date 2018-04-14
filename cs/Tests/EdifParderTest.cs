@@ -7,6 +7,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using BLIFtoEDIF_Converter.Logic;
+using BLIFtoEDIF_Converter.Logic.Parser.Blif;
+using BLIFtoEDIF_Converter.Model.Blif;
+using BLIFtoEDIF_Converter.Model.Edif.Factory;
+using BLIFtoEDIF_Converter.Model.Edif.Factory.TextViewElementsFactoryImplementations;
 using BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl;
 
 namespace Tests
@@ -79,6 +84,51 @@ namespace Tests
 		}
 
 		[TestMethod]
+		public void ParseEdifResultEqualsToBlifConvertTest()
+		{
+			string edifSrc = GetEmbeddedResouceSrc("Tests.DataFiles.AdderAs.adder_as.edif");
+			string blifSrc = GetEmbeddedResouceSrc("Tests.DataFiles.AdderAs.adder-as.blif");
+			var srcLines = blifSrc.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+			IEdif edif = new EdifParser()
+			{
+				RenameDictionary =
+				{
+					{ "C00", "C0_R0"},
+					{"C11", "C1_R1" },
+					{"C00_OBUF", "C0_R0_OBUF" },
+					{"C11_OBUF", "C1_R1_OBUF" },
+					{"LUT_C00", "LUT_C0_R0" },
+					{"LUT_C11", "LUT_C1_R1" },
+
+					{"C00_OBUF_renamed_6", "C0_R0_OBUF_renamed_8" },
+					{"C11_OBUF_renamed_7", "C1_R1_OBUF_renamed_9" },
+					{"x10_IBUF_renamed_2" , "x10_IBUF_renamed_4"},
+					{"x11_IBUF_renamed_3" , "x11_IBUF_renamed_5"},
+					{"x20_IBUF_renamed_4", "x20_IBUF_renamed_2" },
+					{"x21_IBUF_renamed_5", "x21_IBUF_renamed_3" },
+					{"z0_OBUF_renamed_8", "z0_OBUF_renamed_6" },
+					{ "z1_OBUF_renamed_9", "z1_OBUF_renamed_7" },
+				}
+			}.GetEdif(edifSrc);
+			//((Edif)edif).Status = new Status(new Written(DateTime.Now, new List<IComment>()
+			//{
+			//	new Comment("# RenameLog:  [C0 => C0_R0] [C1 => C1_R1]")
+			//}));
+
+			Blif blif = BlifParser.GetBlif(srcLines);
+
+			ITextViewElementsFactory factory = new FastImplTextViewElementsFactory();
+			string renameLog;
+			BlifToEdifModelConverter.EdifAdditionalData edifAdditionalData = new BlifToEdifModelConverter.EdifAdditionalData(blif.Model.Name);
+			IEdif edif2 = blif.ToEdif(factory, edifAdditionalData, out renameLog);
+			((Edif) edif2).Status = null;
+
+			Assert.IsNotNull(edif);
+			Assert.IsNotNull(edif2);
+			Assert.AreEqual(edif, edif2);
+		}
+
+		[TestMethod]
 		public void DebugDiff01_Adder_12lutTest()
 		{
 			string edifSrc = GetEmbeddedResouceSrc("Tests.DataFiles._01_Adder_12lut.adder_as_mainX.edif");
@@ -117,6 +167,92 @@ namespace Tests
 			Assert.IsNotNull(edif);
 			Assert.AreEqual(edif, edif2);
 		}
+
+		[TestMethod]
+		public void DebugDiff_02_Adder_7lut_Test()
+		{
+			string edifSrc = GetEmbeddedResouceSrc("Tests.DataFiles._02_Adder_7lut.adder_as_mod_main_X.edif");
+			string edif2Src = GetEmbeddedResouceSrc("Tests.DataFiles._02_Adder_7lut.adder_as_mod.edif");
+			//var srcLines = blifSrc.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+			IEdif edif = new EdifParser().GetEdif(edifSrc);
+			IEdif edif2 = new EdifParser()
+			{
+				RenameDictionary =
+				{
+					{"C0_R0", "C00"},
+					{"C1_R1", "C11"},
+					{"adder_as_mod", "adder_as_mod_main" },
+					{"adder_as_mod_lib", "adder_as_mod_main_lib" },
+					{"adder_as_mod_adder_as_mod", "adder_as_mod_main_adder_as_mod_main" },
+					{"C0_R0_OBUF", "C00_OBUF" },
+					{"C1_R1_OBUF", "C11_OBUF" },
+					{"C0_R0_OBUF_renamed_8", "C00_OBUF_renamed_6" },
+					{"C1_R1_OBUF_renamed_9", "C11_OBUF_renamed_7" },
+					{"LUT_C0_R0", "LUT_C00" },
+					{"LUT_C1_R1", "LUT_C11" },
+					{"LUT_f3", "LUT_F3" },
+					{"x10_IBUF_renamed_4", "x10_IBUF_renamed_2" },
+					{"x11_IBUF_renamed_5", "x11_IBUF_renamed_3" },
+					{"x20_IBUF_renamed_2", "x20_IBUF_renamed_4" },
+					{"x21_IBUF_renamed_3", "x21_IBUF_renamed_5" },
+					{"z0_OBUF_renamed_6", "z0_OBUF_renamed_8" },
+					{"z1_OBUF_renamed_7", "z1_OBUF_renamed_9" },
+				}
+				// [C0 => C0_R0] [C1 => C1_R1]
+			}.GetEdif(edif2Src);
+
+			//((Edif)edif).Status = new Status(new Written(DateTime.Now, new List<IComment>()
+			//{
+			//	new Comment("Do we need it in converter?")
+			//}));
+			Assert.IsNotNull(edif);
+			Assert.AreEqual(edif, edif2);
+		}
+
+		[TestMethod]
+		public void CompareResults0414_Test()
+		{
+			string edifSrc = GetEmbeddedResouceSrc("Tests.DataFiles.CompareResult0414.adder_as_6LUT_X.EDIF");
+			string blifSrc = GetEmbeddedResouceSrc("Tests.DataFiles.CompareResult0414.7LUT_FEB_18.blif");
+			var srcLines = blifSrc.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+			IEdif edif = new EdifParser()
+			{
+				RenameDictionary =
+				{
+					{"adder_as_6LUT_lib", "adder_as_mod_lib" },
+					{"adder_as_mod_main", "adder_as_mod" },
+					{"adder_as_mod_main_adder_as_mod_main", "adder_as_mod_adder_as_mod" },
+					{ "C00", "C0_R0"},
+					{"C11", "C1_R1" },
+					{"C00_OBUF", "C0_R0_OBUF" },
+					{"C11_OBUF", "C1_R1_OBUF" },
+					{"LUT_C00", "LUT_C0_R0" },
+					{"LUT_C11", "LUT_C1_R1" },
+
+					{"C00_OBUF_renamed_6", "C0_R0_OBUF_renamed_8" },
+					{"C11_OBUF_renamed_7", "C1_R1_OBUF_renamed_9" },
+					{"x10_IBUF_renamed_2" , "x10_IBUF_renamed_4"},
+					{"x11_IBUF_renamed_3" , "x11_IBUF_renamed_5"},
+					{"x20_IBUF_renamed_4", "x20_IBUF_renamed_2" },
+					{"x21_IBUF_renamed_5", "x21_IBUF_renamed_3" },
+					{"z0_OBUF_renamed_8", "z0_OBUF_renamed_6" },
+					{ "z1_OBUF_renamed_9", "z1_OBUF_renamed_7" },
+					{ "LUT_F3", "LUT_f3" },
+				}
+			}.GetEdif(edifSrc);
+
+			Blif blif = BlifParser.GetBlif(srcLines);
+
+			ITextViewElementsFactory factory = new FastImplTextViewElementsFactory();
+			string renameLog;
+			BlifToEdifModelConverter.EdifAdditionalData edifAdditionalData = new BlifToEdifModelConverter.EdifAdditionalData(blif.Model.Name);
+			IEdif edif2 = blif.ToEdif(factory, edifAdditionalData, out renameLog);
+			((Edif)edif2).Status = null;
+
+			Assert.IsNotNull(edif);
+			Assert.AreEqual(edif, edif2);
+		}
+
 
 		private static string GetEmbeddedResouceSrc(string resourceName)
 		{

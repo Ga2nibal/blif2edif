@@ -36,7 +36,8 @@ namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl
 		{
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
-			return string.Equals(Name, other.Name) && Joined.SequenceEqual(other.Joined);
+			return string.Equals(Name, other.Name) && Joined.OrderBy(x => x.Name).ThenBy(y => y?.InstanceRef?.ReferedInstanceName).
+				SequenceEqual(other.Joined.OrderBy(x => x.Name).ThenBy(y => y?.InstanceRef?.ReferedInstanceName));
 			//.OrderBy(j => j.Name).ThenBy(p => p.InstanceRef?.ReferedInstanceName)
 		}
 

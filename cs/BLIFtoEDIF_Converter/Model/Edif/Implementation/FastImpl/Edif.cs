@@ -27,7 +27,7 @@ namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl
 		public IEdifVersion Version { get; }
 		public IEdifLevel Level { get; }
 		public IKeywordMap KeywordMap { get; }
-		public IStatus Status { get; }
+		public IStatus Status { get; set; }
 		public IExternal External { get; }
 		public ILibrary Library { get; }
 		public IDesign Design { get; }

@@ -88,6 +88,8 @@
     <EmbeddedResource Include="DataFiles\02_Adder_7lut\adder_as_mod.edif" />
     <EmbeddedResource Include="DataFiles\02_Adder_7lut\adder_as_mod_main_X.edif" />
     <EmbeddedResource Include="DataFiles\02_Adder_7lut\blif_7lut.blif" />
+    <EmbeddedResource Include="DataFiles\CompareResult0414\7LUT_FEB_18.blif" />
+    <EmbeddedResource Include="DataFiles\CompareResult0414\adder_as_6LUT_X.EDIF" />
     <None Include="Files\adder-as.blif" />
     <None Include="Files\cm82a.blif" />
     <None Include="Files\Diploma-Tasks-rel02-1-data.blif" />

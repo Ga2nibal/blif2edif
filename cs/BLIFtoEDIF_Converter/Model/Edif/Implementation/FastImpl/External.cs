@@ -49,7 +49,7 @@ namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl
 		{
 			if (ReferenceEquals(null, other)) return false;
 			if (ReferenceEquals(this, other)) return true;
-			return string.Equals(Name, other.Name) && Equals(EdifLevel, other.EdifLevel) && Equals(Technology, other.Technology) && Cells.SequenceEqual(other.Cells);
+			return string.Equals(Name, other.Name) && Equals(EdifLevel, other.EdifLevel) && Equals(Technology, other.Technology) && Cells.OrderBy(c => c.Name).SequenceEqual(other.Cells.OrderBy(c => c.Name));
 		}
 
 		public override bool Equals(object obj)
