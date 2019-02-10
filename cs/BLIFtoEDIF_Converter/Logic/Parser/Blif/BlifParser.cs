@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using BLIFtoEDIF_Converter.Logic.InitCalculator;
 using BLIFtoEDIF_Converter.Model.Blif;
 using BLIFtoEDIF_Converter.Model.Blif.Function;
@@ -14,12 +15,13 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Blif
 			if (null == blifSrcLines)
 				throw new ArgumentNullException(nameof(blifSrcLines), $"{nameof(blifSrcLines)} is not defined");
 
-			List<Function> result = GetFunctions(blifSrcLines);
+			List<string> blifNormalizedSrcLines = NormalizeLines(blifSrcLines).ToList();
+			List<Function> result = GetFunctions(blifNormalizedSrcLines);
 
 			Model.Blif.Model model = null;
 			Inputs inputs = null;
 			Outputs outputs = null;
-			foreach (string blifSrcLine in blifSrcLines)
+			foreach (string blifSrcLine in blifNormalizedSrcLines)
 			{
 				if (model == null)
 					TryGetBlifModel(blifSrcLine, out model);
@@ -32,6 +34,39 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Blif
 			}
 
 			return new Model.Blif.Blif(model, inputs, outputs, result);
+		}
+
+		private static IEnumerable<string> NormalizeLines(IEnumerable<string> blifSrcLines)
+		{
+			const string commentSymbol = "#";
+			const string concatenationLineSymbol = "\\";
+
+			StringBuilder concatinatedLineBuilder = new StringBuilder();
+			foreach (string line in blifSrcLines)
+			{
+				string blifSrcLine = line;
+				int commentIndex = blifSrcLine.IndexOf(commentSymbol, StringComparison.InvariantCulture);
+				if (commentIndex >= 0)
+					blifSrcLine = blifSrcLine.Substring(0, commentIndex);
+
+				if (blifSrcLine.EndsWith(concatenationLineSymbol))
+				{
+					concatinatedLineBuilder.Append(blifSrcLine);
+					concatinatedLineBuilder.Remove(concatinatedLineBuilder.Length - 1, 1); //Remove concatenationLineSymbol
+					continue;
+				}
+
+				if (concatinatedLineBuilder.Length != 0)
+				{
+					concatinatedLineBuilder.Append(blifSrcLine);
+					yield return concatinatedLineBuilder.ToString();
+					concatinatedLineBuilder.Clear();
+					continue;
+				}
+
+				if(!string.Empty.Equals(blifSrcLine.Trim()))
+					yield return blifSrcLine;
+			}
 		}
 
 		public static List<Function> GetFunctions(IEnumerable<string> blifSrcLines)
@@ -47,16 +82,13 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Blif
 			foreach (string blifSrcLineIt in blifSrcLines)
 			{
 				string blifSrcLine = blifSrcLineIt;
-				int commentIndex = blifSrcLine.IndexOf("#", StringComparison.InvariantCulture);
-				if (commentIndex >= 0)
-					blifSrcLine = blifSrcLine.Substring(0, commentIndex);
-				if (blifSrcLine.Contains("."))
+				if (blifSrcLine.Contains(functionKey))
 				{
 					if (functionDefStr != null)
 					{
+						Port[] ports = Helpers.FromFuncDefStr(functionDefStr);
 						LogicFunction logicFunction = FromStringDef(functionBody);
 						functionBody.Clear();
-						Port[] ports = Helpers.FromFuncDefStr(functionDefStr);
 						Function func = new Function(ports, logicFunction);
 						result.Add(func);
 					}
@@ -76,6 +108,9 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Blif
 			List<LogicFunctionRow> logicFunctionRows =
 				logicFunctionStringDef.Select(FromStringDef).ToList();
 
+			if(!logicFunctionRows.Any())
+				logicFunctionRows.Add(new LogicFunctionRow(new bool?[] { false })); //GND
+
 			LogicFunction result = new LogicFunction(logicFunctionRows);
 			return result;
 		}
@@ -83,7 +118,17 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Blif
 		public static LogicFunctionRow FromStringDef(string stringDef)
 		{
 			string[] splittedInOutDef =
-				stringDef.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+				stringDef.Split(new string[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+			if (splittedInOutDef.Length == 1)
+			{
+				const string vccConst = "1";
+				if (!vccConst.Equals(splittedInOutDef[0].Trim()))
+					throw new ArgumentException($"can not split '{nameof(stringDef)}' to input and output. " +
+												$"stringDef: {stringDef}. VCC value should be '{vccConst}'");
+				return new LogicFunctionRow(new bool?[]{true});
+			}
+
+
 			if (splittedInOutDef.Length != 2)
 				throw new ArgumentException($"can not split '{nameof(stringDef)}' to input and output. " +
 											$"stringDef: " + stringDef);

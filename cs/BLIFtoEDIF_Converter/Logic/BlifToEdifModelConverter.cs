@@ -243,12 +243,18 @@ namespace BLIFtoEDIF_Converter.Logic
 			renameLog = renameLogBuilder.ToString();
 		}
 
-		private static readonly string[] RestrictedEdifPortNameSubStrings = new string[] {"[", "]", "(", ")"};
+		private const string restrictedDotSymbol = ".";
+		private static readonly string[] RestrictedEdifPortNameSubStrings = new string[] {"[", "]", "(", ")", restrictedDotSymbol };
 		private static string SanitizePortsInEdifConvention(string portBlifName)
 		{
 			string sanitizedName = portBlifName;
 			foreach (string restrictedEdifPortNameSubString in RestrictedEdifPortNameSubStrings)
-				sanitizedName = sanitizedName.Replace(restrictedEdifPortNameSubString, string.Empty);
+			{
+				if(restrictedDotSymbol.Equals(restrictedEdifPortNameSubString, StringComparison.InvariantCulture))
+					sanitizedName = sanitizedName.Replace(restrictedEdifPortNameSubString, "_");
+				else
+					sanitizedName = sanitizedName.Replace(restrictedEdifPortNameSubString, string.Empty);
+			}
 			return sanitizedName;
 		}
 
@@ -300,7 +306,7 @@ namespace BLIFtoEDIF_Converter.Logic
 			{
 				string lutName = CreateContentsInstancesLutName(function);
 
-				string cellRefName = CreateGenericLutName(function.Ports.Length - 1);
+				string cellRefName = CreateGenericLutName(function);
 				ILibraryRef libraryRef = edifFactory.CreateLibraryRef(edifAdditionalData.ExternalName);
 				ICellRef cellRef = edifFactory.CreateCellRef(cellRefName, libraryRef);
 				IViewRef viewRef = edifFactory.CreateViewRef(edifAdditionalData.GenericViewName, cellRef);
@@ -309,10 +315,13 @@ namespace BLIFtoEDIF_Converter.Logic
 				IProperty xstlibProperty = EdifHelper.CreateEdifProperty(edifFactory, PropertyType.XSTLIB,
 					edifAdditionalData.PropertyOwner, true);
 				properties.Add(xstlibProperty);
-				InitFuncValue initFunctionValue = function.CalculateInit();
-				IProperty initProperty = EdifHelper.CreateEdifProperty(edifFactory, PropertyType.INIT,
-					edifAdditionalData.PropertyOwner, initFunctionValue.ToString());
-				properties.Add(initProperty);
+				if (!function.IsGND && !function.IsVCC)
+				{
+					InitFuncValue initFunctionValue = function.CalculateInit();
+					IProperty initProperty = EdifHelper.CreateEdifProperty(edifFactory, PropertyType.INIT,
+						edifAdditionalData.PropertyOwner, initFunctionValue.ToString());
+					properties.Add(initProperty);
+				}
 
 				IInstance lutInstance = edifFactory.CreateInstance(lutName, viewRef, properties);
 
@@ -324,6 +333,11 @@ namespace BLIFtoEDIF_Converter.Logic
 
 		private static string CreateContentsInstancesLutName(Function function)
 		{
+			if (function.IsGND)
+				return "XST_GND";
+			if (function.IsVCC)
+				return "XST_VCC";
+
 			return "LUT_" + function.OutputPort.Name;
 		}
 
@@ -513,7 +527,7 @@ namespace BLIFtoEDIF_Converter.Logic
 					{
 						string lutName = CreateContentsInstancesLutName(function);
 						IInstanceRef instancePortRef = edifFactory.CreateInstanceRef(lutName);
-						string portRefName = "O"; 
+						string portRefName = GetOutputPortName(function);
 						IPortRef inPortRef = edifFactory.CreatePortRef(portRefName, instancePortRef);
 						portRefs.Add(inPortRef);
 					}
@@ -608,8 +622,7 @@ namespace BLIFtoEDIF_Converter.Logic
 		private static IList<ICell> GetExternalGenericCells(Blif blif, ITextViewElementsFactory edifFactory,
 			EdifAdditionalData edifAdditionalData)
 		{
-			IEnumerable<int> genericLutSizes = blif.Functions.Select(f => f.Ports.Length - 1).Distinct();
-			IEnumerable<ICell> genericLutCells = genericLutSizes.Select(size => CreateGenericLut(edifFactory, size, edifAdditionalData));
+			IEnumerable<ICell> genericLutCells = blif.Functions.Select(func => CreateGenericLut(edifFactory, func, edifAdditionalData)).Distinct();
 
 			IList<ICell> result = genericLutCells.ToList();
 
@@ -618,7 +631,7 @@ namespace BLIFtoEDIF_Converter.Logic
 			return result;
 		}
 
-		private static ICell CreateGenericLut(ITextViewElementsFactory edifFactory, int size,
+		private static ICell CreateGenericLut(ITextViewElementsFactory edifFactory, Function func,
 			EdifAdditionalData edifAdditionalData)
 		{
 			/*(cell LUT3
@@ -641,7 +654,8 @@ namespace BLIFtoEDIF_Converter.Logic
           )
       )
     )*/
-			string lutName = CreateGenericLutName(size);
+			int size = func.Ports.Length - 1;
+			string lutName = CreateGenericLutName(func);
 			List<IPort> ports = new List<IPort>();
 			for (int i = 0; i < size; i++)
 			{
@@ -649,7 +663,10 @@ namespace BLIFtoEDIF_Converter.Logic
 				IPort inputPort = edifFactory.CreatePort(inputPortName, PortDirection.INPUT);
 				ports.Add(inputPort);
 			}
-			IPort outputPort = edifFactory.CreatePort("O", PortDirection.OUTPUT);
+
+			var outputPortName = GetOutputPortName(func);
+
+			IPort outputPort = edifFactory.CreatePort(outputPortName, PortDirection.OUTPUT);
 			ports.Add(outputPort);
 			IInterface inInterface = edifFactory.CreateInterface(ports, null, null);
 			IView view = edifFactory.CreateView(edifAdditionalData.GenericViewName, ViewType.NETLIST, inInterface, null);
@@ -657,9 +674,28 @@ namespace BLIFtoEDIF_Converter.Logic
 			return resultCell;
 		}
 
-		private static string CreateGenericLutName(int size)
+		private static string GetOutputPortName(Function function)
 		{
-			return "LUT" + size.ToString();
+			string outputPortName = "O";
+
+			if (function.IsGND)
+				outputPortName = "G";
+			else if (function.IsVCC)
+				outputPortName = "P";
+
+			return outputPortName;
+		}
+
+		private static string CreateGenericLutName(Function function)
+		{
+			if (function.IsGND)
+				return "GND";
+			else if(function.IsVCC)
+				return "VCC";
+
+			var blifFunctionPorts = function.Ports;
+			int inputSize = blifFunctionPorts.Length - 1;
+			return "LUT" + inputSize.ToString();
 		}
 
 		private static string CreateImputPortNameInGenericLut(int index)
