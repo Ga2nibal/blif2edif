@@ -54,7 +54,7 @@ namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl
 		{
 			unchecked
 			{
-				return ((Instances != null ? Instances.GetHashCode() : 0) * 397) ^ (Nets != null ? Nets.GetHashCode() : 0);
+				return ((Instances != null ? Instances.Count.GetHashCode() : 0) * 397) ^ (Nets != null ? Nets.Count.GetHashCode() : 0);
 			}
 		}
 

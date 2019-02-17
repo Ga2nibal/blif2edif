@@ -622,7 +622,7 @@ namespace BLIFtoEDIF_Converter.Logic
 		private static IList<ICell> GetExternalGenericCells(Blif blif, ITextViewElementsFactory edifFactory,
 			EdifAdditionalData edifAdditionalData)
 		{
-			IEnumerable<ICell> genericLutCells = blif.Functions.Select(func => CreateGenericLut(edifFactory, func, edifAdditionalData)).Distinct();
+			HashSet<ICell> genericLutCells = new HashSet<ICell>(blif.Functions.Select(func => CreateGenericLut(edifFactory, func, edifAdditionalData)));
 
 			IList<ICell> result = genericLutCells.ToList();
 

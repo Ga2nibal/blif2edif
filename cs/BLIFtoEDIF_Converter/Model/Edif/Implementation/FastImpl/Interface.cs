@@ -58,9 +58,9 @@ namespace BLIFtoEDIF_Converter.Model.Edif.Implementation.FastImpl
 		{
 			unchecked
 			{
-				var hashCode = (Ports != null ? Ports.GetHashCode() : 0);
+				var hashCode = (Ports != null ? Ports.Count.GetHashCode() : 0);
 				hashCode = (hashCode * 397) ^ (Designator != null ? Designator.GetHashCode() : 0);
-				hashCode = (hashCode * 397) ^ (Properties != null ? Properties.GetHashCode() : 0);
+				hashCode = (hashCode * 397) ^ (Properties != null ? Properties.Count.GetHashCode() : 0);
 				return hashCode;
 			}
 		}

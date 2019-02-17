@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace BLIFtoEDIF_Converter.Util
 {
@@ -69,6 +70,9 @@ namespace BLIFtoEDIF_Converter.Util
 			string result = builder.ToString();
 			if (result.StartsWith(Environment.NewLine))
 				result = result.TrimStart(Environment.NewLine.ToCharArray());
+
+			//Regex seqBracket = new Regex(@"\)\s+\)");
+			//result = seqBracket.Replace(result, "))");
 
 			return result;
 		}
