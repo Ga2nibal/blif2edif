@@ -82,7 +82,7 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Blif
 			foreach (string blifSrcLineIt in blifSrcLines)
 			{
 				string blifSrcLine = blifSrcLineIt;
-				if (blifSrcLine.Contains(functionKey))
+				if (blifSrcLine.Contains(functionKey) || blifSrcLine.StartsWith(".exdc") || blifSrcLine.StartsWith(".end"))
 				{
 					if (functionDefStr != null)
 					{
