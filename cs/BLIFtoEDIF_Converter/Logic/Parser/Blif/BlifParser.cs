@@ -100,6 +100,8 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Blif
 					functionDefStr = blifSrcLine.Replace(functionKey, String.Empty).Trim();
 			}
 
+		
+
 			return result;
 		}
 

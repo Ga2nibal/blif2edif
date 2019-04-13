@@ -302,8 +302,22 @@ namespace BLIFtoEDIF_Converter.Logic
 		{
 			List<IInstance> result = new List<IInstance>();
 
+			bool isGndAdded = false;
+			bool isVccAdded = false;
 			foreach (Function function in blif.Functions)
 			{
+				if (function.IsGND)
+				{
+					if(isGndAdded)
+						continue;
+					isGndAdded = true;
+				}
+				if (function.IsVCC)
+				{
+					if (isVccAdded)
+						continue;
+					isVccAdded = true;
+				}
 				string lutName = CreateContentsInstancesLutName(function);
 
 				string cellRefName = CreateGenericLutName(function);
@@ -584,7 +598,7 @@ namespace BLIFtoEDIF_Converter.Logic
 					{
 						string lutName = CreateContentsInstancesLutName(functionSearch);
 						IInstanceRef instancePortRef = edifFactory.CreateInstanceRef(lutName);
-						string portRefName = "O";
+						string portRefName = GetOutputPortName(netFunction);
 						IPortRef inPortRef = edifFactory.CreatePortRef(portRefName, instancePortRef);
 						portRefs.Add(inPortRef);
 					}
