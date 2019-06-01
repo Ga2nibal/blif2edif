@@ -14,6 +14,10 @@ namespace BLIFtoEDIF_Converter.Model.Blif.Function
 			_logicRows = logicRows.ToArray();
 		}
 
+		public LogicFunction(LogicFunction prototype) : this(prototype._logicRows.Select(lfr => new LogicFunctionRow(lfr)).ToArray())
+		{
+		}
+
 		public IReadOnlyList<LogicFunctionRow> LogicRows => _logicRows;
 		public IReadOnlyList<bool> OutputColumn => _logicRows.Select(r => r.Output).ToArray();
 	}

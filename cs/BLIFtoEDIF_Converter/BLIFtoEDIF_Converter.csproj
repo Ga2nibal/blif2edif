@@ -74,6 +74,7 @@
     <Compile Include="Logic\InitCalculator\InitCalculator.cs" />
     <Compile Include="Logic\BlifToEdifModelConverter.cs" />
     <Compile Include="Logic\Parser\Edif\EdifParser.cs" />
+    <Compile Include="Logic\Transformations\Feedback\FeedbackTransformation.cs" />
     <Compile Include="Model\Blif\Function\Function.cs" />
     <Compile Include="Logic\Parser\Blif\BlifParser.cs" />
     <Compile Include="Logic\InitCalculator\Helpers.cs" />
@@ -118,6 +119,8 @@
     <Compile Include="Model\Edif\Implementation\FastImpl\View\ViewRef.cs" />
     <Compile Include="Model\Edif\Implementation\FastImpl\Written.cs" />
     <Compile Include="Model\Edif\Factory\Implementations.cs" />
+    <Compile Include="Model\TextConverter\Blif\IBlifWriter.cs" />
+    <Compile Include="Model\TextConverter\Blif\Impl\BlifWriter.cs" />
     <Compile Include="Model\TextConverter\Edif\IEdifTextConvertable.cs" />
     <Compile Include="Model\Edif\Abstraction\Instance\IInstance.cs" />
     <Compile Include="Model\Edif\Abstraction\INet.cs" />

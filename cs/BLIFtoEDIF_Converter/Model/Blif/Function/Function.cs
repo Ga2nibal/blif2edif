@@ -5,6 +5,10 @@ namespace BLIFtoEDIF_Converter.Model.Blif.Function
 {
 	public class Function
 	{
+		public Function(Function prototype) : this(prototype.Ports.Select(p => new Port(p)).ToArray(), new LogicFunction(prototype.LogicFunction))
+		{
+		}
+
 		public Function(Port[] ports, LogicFunction logicFunction)
 		{
 			if(null == ports || 0 == ports.Length)

@@ -16,6 +16,10 @@ namespace BLIFtoEDIF_Converter.Model.Blif.Function
 			_rowData = rowData.ToArray();
 		}
 
+		public LogicFunctionRow(LogicFunctionRow lfr) : this(lfr._rowData.ToArray())
+		{
+		}
+
 		public bool? this[int index] => _rowData[index];
 
 		public Boolean Output => _rowData.Last().Value;

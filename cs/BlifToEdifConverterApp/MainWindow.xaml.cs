@@ -18,10 +18,13 @@ using BlifToEdifConverterApp.Interaction;
 using BLIFtoEDIF_Converter.Logic;
 using BLIFtoEDIF_Converter.Logic.InitCalculator;
 using BLIFtoEDIF_Converter.Logic.Parser.Blif;
+using BLIFtoEDIF_Converter.Logic.Transformations.Feedback;
 using BLIFtoEDIF_Converter.Model.Blif;
 using BLIFtoEDIF_Converter.Model.Blif.Function;
 using BLIFtoEDIF_Converter.Model.Edif.Abstraction;
 using BLIFtoEDIF_Converter.Model.Edif.Factory;
+using BLIFtoEDIF_Converter.Model.TextConverter.Blif;
+using BLIFtoEDIF_Converter.Model.TextConverter.Blif.Impl;
 using BLIFtoEDIF_Converter.Util;
 using Microsoft.Win32;
 
@@ -168,6 +171,27 @@ namespace BlifToEdifConverterApp
 		private void RadioLocalEncoding_OnChecked(object sender, RoutedEventArgs e)
 		{
 			_encoding = Encoding.Default;
+		}
+
+		private void Feedback_OnClick(object sender, RoutedEventArgs e)
+		{
+			try
+			{
+				string blifValues = BlifTextBox.Text;
+				List<string> result = Regex.Split(blifValues, "\r\n|\r|\n").Where(str => !string.IsNullOrEmpty(str)).ToList();
+				Blif blif = BlifParser.GetBlif(result);
+
+				Blif transformedBlif = FeedbackTransformation.AddFeedbackToFunction(blif);
+
+				IBlifWriter blifWriter = new BlifWriter();
+				string blifText = blifWriter.ToSourceCode(transformedBlif);
+				EdifTextBox.Text = blifText;
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show($"sorry. show exception message to developer. {Environment.NewLine}Exceptiom: {ex.ToString()}", "BLIF to EDIF Converter",
+					MessageBoxButton.OK, MessageBoxImage.Warning);
+			}
 		}
 	}
 }
