@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLIFtoEDIF_Converter", "BLIFtoEDIF_Converter\BLIFtoEDIF_Converter.csproj", "{590C92F9-7F2D-43EB-BD1E-138BC5737C00}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{16FF0A81-971D-4B27-912D-D5CBE3C00B79}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlifToEdifConverterApp", "BlifToEdifConverterApp\BlifToEdifConverterApp.csproj", "{C914B85C-0205-44BC-8DC2-57FB69F6E9A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "combinations", "combinations\combinations.csproj", "{7E465012-DA54-4EDC-8F44-4FBE4A9F6D00}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,8 +29,15 @@ Global
 		{C914B85C-0205-44BC-8DC2-57FB69F6E9A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C914B85C-0205-44BC-8DC2-57FB69F6E9A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C914B85C-0205-44BC-8DC2-57FB69F6E9A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E465012-DA54-4EDC-8F44-4FBE4A9F6D00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E465012-DA54-4EDC-8F44-4FBE4A9F6D00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E465012-DA54-4EDC-8F44-4FBE4A9F6D00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E465012-DA54-4EDC-8F44-4FBE4A9F6D00}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {866F2859-B5FB-47EA-B570-8A8E8C26FB43}
 	EndGlobalSection
 EndGlobal
