@@ -19,7 +19,7 @@ namespace BLIFtoEDIF_Converter.Util
 			if(openBracketsCount != clodeBracketsCount)
 				throw new ArgumentException($"{nameof(edifCode)} open brackets count must be equal to close bracket count",
 					nameof(edifCode));
-			StringBuilder builder = new StringBuilder(edifCode.Length);
+			StringBuilder builder = new StringBuilder(edifCode.Length+100);
 
 			int tabIndex = 0;
 			bool closeBracketOnNewLine = false;
@@ -65,6 +65,28 @@ namespace BLIFtoEDIF_Converter.Util
 				}
 
 				builder.Append(c);
+			}
+
+			int n = 4;
+			if (builder.Length > n)
+			{
+				//Еще одна правка нужна.
+				//Конвертированный в EDIF файл заканчивается строкой с четырьмя закрывающими скобками:
+				//XILINX в этом случае эту строку не принимает во внимание и тем самым игнорирует выбор типа чипа(xc6slx4 …)
+				//Ситуация становится корректной если просто разделить скобки пополам:
+				int lastIndex = builder.Length - 1;
+				bool isEndWithNParentheses = true;
+				for (int i = 0; i < 4; i++)
+				{
+					if (builder[lastIndex - i] != ')')
+					{
+						isEndWithNParentheses = false;
+						break;
+					}
+				}
+
+				if (isEndWithNParentheses)
+					builder.Insert(lastIndex - 1, Environment.NewLine);
 			}
 
 			string result = builder.ToString();
