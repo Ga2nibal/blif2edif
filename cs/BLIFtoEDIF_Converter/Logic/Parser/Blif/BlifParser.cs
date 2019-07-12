@@ -36,7 +36,7 @@ namespace BLIFtoEDIF_Converter.Logic.Parser.Blif
 			return new Model.Blif.Blif(model, inputs, outputs, result);
 		}
 
-		private static IEnumerable<string> NormalizeLines(IEnumerable<string> blifSrcLines)
+		public static IEnumerable<string> NormalizeLines(IEnumerable<string> blifSrcLines)
 		{
 			const string commentSymbol = "#";
 			const string concatenationLineSymbol = "\\";

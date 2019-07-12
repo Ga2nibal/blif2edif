@@ -70,11 +70,12 @@ namespace BlifToEdifConverterApp
 			{
 				string blifValues = BlifTextBox.Text;
 				List<string> result = Regex.Split(blifValues, "\r\n|\r|\n").Where(str => !string.IsNullOrEmpty(str)).ToList();
+				result = BlifParser.NormalizeLines(result).ToList();
 				List<Function> functions = BlifParser.GetFunctions(result);
 
 				List<InitFuncValue> initValues = functions.Select(f => f.CalculateInit()).ToList();
 				List<string> stringResults = initValues.Select(iv => iv.ToString()).ToList();
-				EdifTextBox.Text = string.Join(Environment.NewLine, stringResults);
+				EdifTextBox.Text = string.Join(Environment.NewLine+ Environment.NewLine, stringResults);
 				_lastEdifAdditionalData = null;
 			}
 			catch (Exception ex)
