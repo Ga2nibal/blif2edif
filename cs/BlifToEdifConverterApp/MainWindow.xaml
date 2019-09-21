@@ -47,10 +47,6 @@
 					VerticalAlignment="Top">
 			<Button Height="Auto" Content="Convert to Edif" Width="90" Name="ConvertToEdif"
 					Margin="3,0" Click="ConvertToEdif_OnClick"></Button>
-			<Button Height="Auto" Content="InitCalc" Width="60" Name="CalcInit"
-					Margin="3,0" Click="CalcInit_OnClick"></Button>
-            <Button Height="Auto" Content="Feedback" Width="60" Name="Feedback"
-                    Margin="3,0" Click="Feedback_OnClick"></Button>
 		</StackPanel>
 		<StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right"
 					VerticalAlignment="Top">

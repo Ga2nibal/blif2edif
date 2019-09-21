@@ -18,7 +18,6 @@ using BlifToEdifConverterApp.Interaction;
 using BLIFtoEDIF_Converter.Logic;
 using BLIFtoEDIF_Converter.Logic.InitCalculator;
 using BLIFtoEDIF_Converter.Logic.Parser.Blif;
-using BLIFtoEDIF_Converter.Logic.Transformations.Feedback;
 using BLIFtoEDIF_Converter.Model.Blif;
 using BLIFtoEDIF_Converter.Model.Blif.Function;
 using BLIFtoEDIF_Converter.Model.Edif.Abstraction;
@@ -62,26 +61,6 @@ namespace BlifToEdifConverterApp
 		public MainWindow()
 		{
 			InitializeComponent();
-		}
-
-		private void CalcInit_OnClick(object sender, RoutedEventArgs e)
-		{
-			try
-			{
-				string blifValues = BlifTextBox.Text;
-				List<string> result = Regex.Split(blifValues, "\r\n|\r|\n").Where(str => !string.IsNullOrEmpty(str)).ToList();
-				List<Function> functions = BlifParser.GetFunctions(result);
-
-				List<InitFuncValue> initValues = functions.Select(f => f.CalculateInit()).ToList();
-				List<string> stringResults = initValues.Select(iv => iv.ToString()).ToList();
-				EdifTextBox.Text = string.Join(Environment.NewLine, stringResults);
-				_lastEdifAdditionalData = null;
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"sorry. show exception message to developer. {Environment.NewLine}Exceptiom: {ex.ToString()}", "BLIF to EDIF Converter",
-					MessageBoxButton.OK, MessageBoxImage.Warning);
-			}
 		}
 
 		private void LoadBlif_OnClick(object sender, RoutedEventArgs e)
@@ -171,27 +150,6 @@ namespace BlifToEdifConverterApp
 		private void RadioLocalEncoding_OnChecked(object sender, RoutedEventArgs e)
 		{
 			_encoding = Encoding.Default;
-		}
-
-		private void Feedback_OnClick(object sender, RoutedEventArgs e)
-		{
-			try
-			{
-				string blifValues = BlifTextBox.Text;
-				List<string> result = Regex.Split(blifValues, "\r\n|\r|\n").Where(str => !string.IsNullOrEmpty(str)).ToList();
-				Blif blif = BlifParser.GetBlif(result);
-
-				Blif transformedBlif = FeedbackTransformation.AddFeedbackToFunction(blif);
-
-				IBlifWriter blifWriter = new BlifWriter();
-				string blifText = blifWriter.ToSourceCode(transformedBlif);
-				EdifTextBox.Text = blifText;
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"sorry. show exception message to developer. {Environment.NewLine}Exceptiom: {ex.ToString()}", "BLIF to EDIF Converter",
-					MessageBoxButton.OK, MessageBoxImage.Warning);
-			}
 		}
 	}
 }

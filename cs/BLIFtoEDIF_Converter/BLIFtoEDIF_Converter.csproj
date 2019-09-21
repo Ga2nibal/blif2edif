@@ -74,7 +74,6 @@
     <Compile Include="Logic\InitCalculator\InitCalculator.cs" />
     <Compile Include="Logic\BlifToEdifModelConverter.cs" />
     <Compile Include="Logic\Parser\Edif\EdifParser.cs" />
-    <Compile Include="Logic\Transformations\Feedback\FeedbackTransformation.cs" />
     <Compile Include="Model\Blif\Function\Function.cs" />
     <Compile Include="Logic\Parser\Blif\BlifParser.cs" />
     <Compile Include="Logic\InitCalculator\Helpers.cs" />
@@ -160,7 +159,9 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Logic\Transformations\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
